@@ -8,6 +8,7 @@ public abstract class Action {
 	public abstract void playerTarget();
 	public abstract void execute();
 	public Chr me;
+	public int multi;
 	public Action(Chr me) {
 		this.me = me;
 		this.target = this::playerTarget;

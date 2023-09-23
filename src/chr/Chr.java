@@ -37,6 +37,8 @@ public abstract class Chr {
 	public int buffMDF;
 	public int buffSPD;
 	
+	public int DEFMulti;
+	
 	public Party party;
 	public ArrayList<Action> actions;
 	public Action action;
@@ -74,6 +76,7 @@ public abstract class Chr {
 		this.minMDF = (int)(this.baseMDF * minMDFCoef);
 		this.minSPD = (int)(this.baseSPD * minSPDCoef);
 		
+		DEFMulti = 100;
 		party = null;
 		actions = new ArrayList<>();
 		action = null;

@@ -11,6 +11,7 @@ import action.ActionItem;
 import action.ActionMagic;
 import action.ActionSkill;
 import chr.Chr;
+import chr.Party;
 
 public class Display {
 	private static Scanner sc = new Scanner(System.in);
@@ -178,5 +179,28 @@ public class Display {
 			}
 		}
 		return num;
+	}
+	
+	public static int calcMultiDmg(Chr attacker, Chr defender, int multi) {
+		int Dmg = 0;
+		Dmg = (int) ((attacker.ATK * multi * (1000 + Math.random() * 200)) / 1000 / 100
+				- defender.DEF * defender.DEFMulti / 100);
+		if (Dmg < 0) {
+			Dmg = 0;
+		} else if (Dmg > 9999) {
+			Dmg = 9999;
+		}
+		return Dmg;
+	}
+	
+	public static void judgeHP(Chr attacker, Chr defender) {
+		if (defender.HP <= 0) {
+			defender.HP = 0;
+			if (attacker.party.pKind == Party.PARTY_KIND_ALLY) {
+				System.out.println(defender.name + "をたおした！");
+			} else {
+				System.out.println(defender.name + "はしんでしまった！");
+			}
+		}
 	}
 }

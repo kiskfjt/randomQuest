@@ -9,6 +9,7 @@ public class Party {
 	public static final int PARTY_KIND_ENEMY = 1;
 	public ArrayList<Chr> member;
 	public Party enemy;
+	public int pKind;
 	
 	public Party(String[] name, int partyKind) {
 		member = new ArrayList<>();
@@ -19,6 +20,9 @@ public class Party {
 
 			if (partyKind == PARTY_KIND_ALLY) {
 				chr.setToPC();
+				pKind = PARTY_KIND_ALLY;
+			} else {
+				pKind = PARTY_KIND_ENEMY;
 			}
 			
 			member.add(chr);

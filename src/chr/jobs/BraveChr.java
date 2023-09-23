@@ -1,5 +1,7 @@
 package chr.jobs;
 
+import java.util.ArrayList;
+
 import action.ActionBasicAttack;
 import action.ActionBasicGuard;
 import chr.Chr;
@@ -27,6 +29,16 @@ public class BraveChr extends Chr {
 	}
 	
 	public void attackTarget() {
-		
+		ArrayList<Chr> list = new ArrayList<>(party.enemy.member);
+	    int targetNum = 0;
+	    Chr target = null;
+	    while (true) {
+	    	targetNum = (int) (Math.random() * list.size());
+	    	target = list.get(targetNum);
+	    	if (target.isAlive()) {
+	    		this.targets.add(target);
+	    		break;
+	    	}
+	    }
 	}
 }
