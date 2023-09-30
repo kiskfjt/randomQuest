@@ -3,9 +3,13 @@ package chr;
 import java.util.ArrayList;
 
 import action.Action;
-import others.Display;
+import others.IO;
 
 public abstract class Chr {
+	private final int DEF_MULTI_DEFAULT = 1;
+	public static final int MAX_HP = 9999;
+	
+	
 	public String name;
 	public int HP;
 	public int MP;
@@ -43,6 +47,7 @@ public abstract class Chr {
 	public ArrayList<Action> actions;
 	public Action action;
 	public ArrayList<Chr> targets;
+	public String jobName;
 	
 	
 	public final int maxATKCoef = 2;
@@ -76,11 +81,12 @@ public abstract class Chr {
 		this.minMDF = (int)(this.baseMDF * minMDFCoef);
 		this.minSPD = (int)(this.baseSPD * minSPDCoef);
 		
-		DEFMulti = 100;
+		DEFMulti = DEF_MULTI_DEFAULT;
 		party = null;
 		actions = new ArrayList<>();
 		action = null;
 		targets = new ArrayList<>();
+		jobName = null;
 	}
 	
 	public Chr() {
@@ -109,7 +115,7 @@ public abstract class Chr {
 	}
 	
 	public void playerCommand() {
-		action = Display.printAndSelectPCAction(name, actions);
+		action = IO.printAndSelectPCAction(name, actions);
 	}
 	
 	public abstract void nonPlayerCommand();

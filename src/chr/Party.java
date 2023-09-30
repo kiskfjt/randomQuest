@@ -3,6 +3,8 @@ package chr;
 import java.util.ArrayList;
 
 import chr.jobs.BraveChr;
+import chr.jobs.PriestChr;
+import others.IO;
 
 public class Party {
 	public static final int PARTY_KIND_ALLY = 0;
@@ -16,8 +18,17 @@ public class Party {
 		for (int i = 0; i < name.length; i++) {
 
 			//todo ランダム選択にする
-			Chr chr = new BraveChr(name[i]);
-
+			Chr chr = null;
+			int jobNo = IO.randomNum(1);
+			switch (jobNo) {
+			case 0:
+				chr = new BraveChr(name[i]);
+				break;
+			case 1:
+				chr = new PriestChr(name[i]);
+				break;
+			}
+			
 			if (partyKind == PARTY_KIND_ALLY) {
 				chr.setToPC();
 				pKind = PARTY_KIND_ALLY;

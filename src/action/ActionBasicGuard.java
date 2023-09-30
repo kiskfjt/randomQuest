@@ -1,23 +1,21 @@
 package action;
 
 import chr.Chr;
+import others.IO;
 
 public class ActionBasicGuard extends ActionBasic {
 	public ActionBasicGuard(Chr me) {
 		super(me);
 		name = "ぼうぎょ";
+		me.DEFMulti = 2;
 	}
 
-	@Override
 	public void playerTarget() {
-		// TODO 自動生成されたメソッド・スタブ
-		
+		// ターゲット選択はなし
 	}
 
-	@Override
 	public void execute() {
-		// TODO 自動生成されたメソッド・スタブ
-		
+		IO.msgln("【%sは身をかためている！】", me.name);
 	}
 
 }

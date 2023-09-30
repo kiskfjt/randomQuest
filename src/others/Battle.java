@@ -48,8 +48,8 @@ public class Battle {
 		
 		for (turn = 1;; turn++) {
 			// ステータス表示
-			Display.printStatus(ally.member);
-			Display.printStatus(enemy.member);
+			IO.printStatus(ally.member);
+			IO.printStatus(enemy.member);
 
 			//
 			

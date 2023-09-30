@@ -8,6 +8,9 @@ public class ActionMagic extends Action {
 		super(me);
 		name = "まほう";
 	}
+	
+	// 消費MP
+	public int MPCons;
 
 	public void playerTarget() {
 		// TODO 自動生成されたメソッド・スタブ

@@ -13,7 +13,7 @@ import action.ActionSkill;
 import chr.Chr;
 import chr.Party;
 
-public class Display {
+public class IO {
 	private static Scanner sc = new Scanner(System.in);
 	private static final int ATTACK = 0;
 	private static final int SKILL = 1;
@@ -23,33 +23,43 @@ public class Display {
 	private static final int EQUIP = 5;
 
 	public static void printStatus(ArrayList<Chr> member) {
-		System.out.println("***********************************");
-		System.out.printf("%3s", "");
+		msgln("***********************************");
+		msg("%5s", "");
 		for (int i = 0; i < member.size(); i++) {
-			System.out.printf("%5s", member.get(i).name);
+			msg("%5s", member.get(i).name);
 		}
-		System.out.println();
-		System.out.printf("%3s", "HP");
+		ln();
+		msg("%3s", "HP");
 		for (int i = 0; i < member.size(); i++) {
-			System.out.printf("%8d", member.get(i).HP);
+			msg("%8d", member.get(i).HP);
 		}
-		System.out.println();
-		System.out.printf("%3s", "MP");
+		ln();
+		msg("%3s", "MP");
 		for (int i = 0; i < member.size(); i++) {
-			System.out.printf("%8d", member.get(i).MP);
+			msg("%8d", member.get(i).MP);
 		}
-		System.out.println();
-		System.out.printf("%3s", "ATK");
+		ln();
+		msg("%3s", "ATK");
 		for (int i = 0; i < member.size(); i++) {
-			System.out.printf("%8d", member.get(i).ATK);
+			msg("%8d", member.get(i).ATK);
 		}
-		System.out.println();
-		System.out.printf("%3s", "DEF");
+		ln();
+		msg("%3s", "DEF");
 		for (int i = 0; i < member.size(); i++) {
-			System.out.printf("%8d", member.get(i).DEF);
+			msg("%8d", member.get(i).DEF);
+		}
+		ln();
+		msg("%3s", "DEF");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%8d", member.get(i).DEF);
 		}
 		//System.out.println();
 		//System.out.printf("%3s", "SPD");
+		ln();
+		msg("%3s", "job");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%5s", member.get(i).jobName);
+		}
 
 		System.out.println();
 		System.out.println("***********************************");
@@ -86,15 +96,15 @@ public class Display {
 		}
 		
 		while (true) {
-			System.out.println(name + "の行動の番号を入力");
-			System.out.println("0.こうげき");
-			System.out.println("1.とくぎ");
-			System.out.println("2.まほう");
-			System.out.println("3.どうぐ");
-			System.out.println("4.ぼうぎょ");
-			System.out.println("5.そうび");
+			msgln("%sの行動の番号を入力", name);
+			msg("%2d.%s", 0, "こうげき");
+			msgln("%2d.%s", 1, "とくぎ　");
+			msg("%2d.%s", 2, "まほう　");
+			msgln("%2d.%s", 3, "どうぐ　");
+			msg("%2d.%s", 4, "ぼうぎょ");
+			msgln("%2d.%s", 5, "そうび　");
 			
-			actionNum = scanNumber(EQUIP);
+			actionNum = inputNumber(EQUIP);
 			
 			if (actionNum == ATTACK) {
 				selAction = new ArrayList<>(attack);
@@ -118,29 +128,29 @@ public class Display {
 			
 			if (selAction.size() == 0) {
 				if (actionNum == ATTACK) {
-					System.out.println("こうげきできない！");
+					msgln("こうげきできない！");
 				} else if (actionNum == SKILL) {
-					System.out.println("とくぎを覚えていない！");
+					msgln("とくぎを覚えていない！");
 				} else if (actionNum == MAGIC) {
-					System.out.println("まほうを覚えていない！");
+					msgln("まほうを覚えていない！");
 				} else if (actionNum == ITEM) {
-					System.out.println("どうぐを持っていない！");
+					msgln("どうぐを持っていない！");
 				} else if (actionNum == GUARD) {
-					System.out.println("ぼうぎょできない！");
+					msgln("ぼうぎょできない！");
 				} else if (actionNum == EQUIP) {
-					System.out.println("なにもそうびしていない！");
+					msgln("なにもそうびしていない！");
 				}
-			}else if (actionNum == ATTACK || actionNum == GUARD) {
+				continue;
+			} else if (actionNum == ATTACK || actionNum == GUARD) {
 				action = selAction.get(0);
 				break;
-			} else if (actionNum != ATTACK){
-				System.out.println(name + "の" + actionName + "の番号を入力");
+			} else if (actionNum != ATTACK || actionNum != GUARD){
+				msgln("%sの使用する%sの番号を入力", name, actionName);
 				for (int i = 0; i < selAction.size(); i++) {
-					System.out.printf("%d.%s", i, selAction.get(i).name);
-					System.out.println();
+					msgln("%d.%s", i, selAction.get(i).name);
 				}
 				
-				actionNum = scanNumber(selAction.size() - 1);
+				actionNum = inputNumber(selAction.size() - 1);
 				action = selAction.get(actionNum);
 				break;
 			}
@@ -148,19 +158,44 @@ public class Display {
 		return action;
 		
 	}
-
-	public static Chr printAndSelectTargets(ArrayList<Chr> memList) {
-		for (int i = 0; i < memList.size(); i++) {
-			String name = memList.get(i).name;
-			System.out.printf(i + ".%s", name);
-			System.out.println();
+	
+	/**
+	 * 単体ターゲット選択メソッド
+	 * @param memList
+	 * @return
+	 */
+	public static Chr selectSingleTarget(ArrayList<Chr> memList) {
+		msgln("ターゲットを選択");
+		int targetNum = 0;
+		Chr targetChr = null;
+		while (true) {
+			for (int i = 0; i < memList.size(); i++) {
+				String name = memList.get(i).name;
+				System.out.printf(i + ".%s", name);
+				System.out.println();
+			}
+			targetNum = inputNumber(memList.size() - 1);
+			targetChr = memList.get(targetNum);
+			if (targetChr.isAlive()) {
+				break;
+			} else {
+				msgln("%sはすでにしんでいる！", targetChr.name);
+				continue;
+			}
 		}
-		int targetNum = scanNumber(memList.size() - 1);
-		Chr targetChr = memList.get(targetNum);
 		return targetChr;
 	}
+	
+	public static void selectMultiTargets(ArrayList<Chr> memList, ArrayList<Chr> tgtList) {
+		for (Chr c : memList) {
+			if(c.HP > 0) {
+				tgtList.add(c);
+			}
+		}
+		
+	}
 
-	public static int scanNumber(int max) {
+	public static int inputNumber(int max) {
 		String str = "";
 		int num = 0;
 		while (true) {
@@ -181,18 +216,6 @@ public class Display {
 		return num;
 	}
 	
-	public static int calcMultiDmg(Chr attacker, Chr defender, int multi) {
-		int Dmg = 0;
-		Dmg = (int) ((attacker.ATK * multi * (1000 + Math.random() * 200)) / 1000 / 100
-				- defender.DEF * defender.DEFMulti / 100);
-		if (Dmg < 0) {
-			Dmg = 0;
-		} else if (Dmg > 9999) {
-			Dmg = 9999;
-		}
-		return Dmg;
-	}
-	
 	public static void judgeHP(Chr attacker, Chr defender) {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
@@ -203,4 +226,55 @@ public class Display {
 			}
 		}
 	}
+	
+	/**
+	 * ランダム整数生成メソッド
+	 * minからmaxまでのランダムな整数を返す
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static int randomNum(int min, int max) {
+		int range = max - min + 1;
+		return min + (int)(Math.random() * range);
+	}
+	
+	/**
+	 * ランダム整数生成メソッド
+	 * 0からmaxまでのランダムな整数を返す
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static int randomNum(int max) {
+		int range = max + 1;
+		return (int)(Math.random() * range);
+	}
+	
+	/**
+	 * メッセージを出力するメソッド。
+	 * 最後に改行を出力する。
+	 * @param fmt 出力フォーマット。
+	 * @param v 出力する値。
+	 * @see msg
+	 */
+	public static void msgln(String fmt, Object... v) {
+		System.out.print(String.format(fmt + "\n", v));
+	}
+
+	/**
+	 * メッセージを出力するメソッド。
+	 * 最後に改行を出力しない。
+	 * @param fmt 出力フォーマット。
+	 * @param v 出力する値。
+	 * @see msgln
+	 */
+	public static void msg(String fmt, Object... v) {
+		System.out.print(String.format(fmt, v));
+	}
+	
+	public static void ln() {
+		System.out.println();
+	}
+
 }
