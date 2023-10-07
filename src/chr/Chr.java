@@ -115,7 +115,7 @@ public abstract class Chr {
 	}
 	
 	public void playerCommand() {
-		action = IO.printAndSelectPCAction(name, actions);
+		action = IO.printAndSelectPCAction(name, MP, actions);
 	}
 	
 	public abstract void nonPlayerCommand();

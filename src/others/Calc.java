@@ -17,6 +17,10 @@ public class Calc {
 		return Dmg;
 	}
 	
+	public static int physSingleDmg(Chr me) {
+		return physSingleDmg(me, me.targets.get(0));
+	}
+	
 	public static void physMultiDmg(Chr me) {
 		int Dmg = 0;
 		for (Chr c : me.targets) {
@@ -29,5 +33,26 @@ public class Calc {
 				IO.judgeHP(me, c);
 			}
 		}
+	}
+	
+	public static void singleHeal(Chr me, Chr target, int rangeMin, int rangeMax) {
+		int HPbefore = 0;
+		int HPafter = 0;
+		int value = 0;
+		
+		HPbefore = target.HP;
+		
+		target.HP += IO.randomNum(rangeMin, rangeMax);
+		if (target.HP > target.maxHP) {
+			target.HP = target.maxHP;
+		}
+		
+		HPafter = target.HP;
+		value = HPafter - HPbefore;
+		IO.msgln("%sのHPが%d回復した！", target.name, value);
+	}
+	
+	public static void singleHeal(Chr me, int rangeMin, int rangeMax) {
+		singleHeal(me, me.targets.get(0), rangeMin, rangeMax);
 	}
 }

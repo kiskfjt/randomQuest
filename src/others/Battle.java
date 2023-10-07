@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import action.ActionMagic;
 import chr.Chr;
 import chr.Party;
 
@@ -16,8 +17,11 @@ public class Battle {
 	public final int RESULT_ALL_DEAD = 5;
 	
 	public int turn;
+	
 	public String[] allyName = {"のざわ", "とぐち", "さとう", "ふじた"};
 	public String[] enemyName = {"みぎて", "おそざわ", "ひだりて"};
+	// public Chr[] enemyChr = {new BossChr(), new BossChr(), new BossChr()};
+	
 	public Party ally;
 	public Party enemy;
 	
@@ -34,9 +38,13 @@ public class Battle {
 //		enemy.member = makeParty.makeParty(enemyName, MakeParty.PARTY_KIND_ENEMY);
 
 		ally = new Party(allyName, Party.PARTY_KIND_ALLY);
-		enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY);
+		
+		enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY);// 敵のジョブランダム選択
+		// enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY, enemyChr);
+		
 		ally.enemy = enemy;
 		enemy.enemy = ally;
+		
 
 	}
 	
@@ -50,21 +58,19 @@ public class Battle {
 			// ステータス表示
 			IO.printStatus(ally.member);
 			IO.printStatus(enemy.member);
-
-			//
+			
 			
 			// 行動順決定
 			Chr[] allList = addList(ally.member, enemy.member);// 行動選択はこちらを使う
 			Chr[] orderList = makeOrder(allList);// 行動実行時はこちらを使う
 			
+			
 			// 行動決定
 			command(allList);
 			
+			
 			// 行動実行
 			int result = execute(orderList);
-			
-			
-			//
 			
 			
 			// ゲーム継続判定
@@ -150,9 +156,19 @@ public class Battle {
 			// 死んでたらスキップ
 			if (c.isDead())
 				continue;
-
+			
+			// MPチェック　MPが足りなければスキップ
+			if (c.action instanceof ActionMagic) {
+				ActionMagic mAction = (ActionMagic) c.action;
+				if (mAction.MPCons > c.MP) {
+					IO.msgln("MPが足りない！");
+					continue;
+				}
+			}
+			
+			// action実行
 			c.action.execute();
-
+			
 			boolean allyDestroy = ally.isZenmetsu();
 			boolean enemyDestroy = enemy.isZenmetsu();
 			if (allyDestroy && enemyDestroy) {

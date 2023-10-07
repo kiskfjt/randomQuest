@@ -21,6 +21,7 @@ public class IO {
 	private static final int ITEM = 3;
 	private static final int GUARD = 4;
 	private static final int EQUIP = 5;
+	
 
 	public static void printStatus(ArrayList<Chr> member) {
 		msgln("***********************************");
@@ -64,9 +65,10 @@ public class IO {
 		System.out.println();
 		System.out.println("***********************************");
 	}
-
-	public static Action printAndSelectPCAction(String name, ArrayList<Action> actions) {
+		
+	public static Action printAndSelectPCAction(String name, int MP, ArrayList<Action> actions) {
 		int actionNum = 0;
+		int actionSubNum = 0;
 		String actionName = "";
 		Action action = null;
 		ArrayList<Action> selAction = null;
@@ -144,15 +146,23 @@ public class IO {
 			} else if (actionNum == ATTACK || actionNum == GUARD) {
 				action = selAction.get(0);
 				break;
-			} else if (actionNum != ATTACK || actionNum != GUARD){
+			} else if (actionNum != ATTACK && actionNum != GUARD){
 				msgln("%sの使用する%sの番号を入力", name, actionName);
 				for (int i = 0; i < selAction.size(); i++) {
 					msgln("%d.%s", i, selAction.get(i).name);
 				}
 				
-				actionNum = inputNumber(selAction.size() - 1);
-				action = selAction.get(actionNum);
-				break;
+				// 最終的なアクションの決定
+				actionSubNum = inputNumber(selAction.size() - 1);
+				action = selAction.get(actionSubNum);
+				
+				// 呪文決定時点でもMP判定を行う
+				if (actionNum == MAGIC && ((ActionMagic) action).MPCons > MP) {
+					msgln("MPがたりない！");
+					continue;// TODO:ここで呪文一覧に戻るようにする
+				} else {
+					break;
+				}
 			}
 		}
 		return action;
@@ -242,7 +252,6 @@ public class IO {
 	/**
 	 * ランダム整数生成メソッド
 	 * 0からmaxまでのランダムな整数を返す
-	 * @param min
 	 * @param max
 	 * @return
 	 */
@@ -273,8 +282,19 @@ public class IO {
 		System.out.print(String.format(fmt, v));
 	}
 	
+	/**
+	 * 改行のみ行うメソッド
+	 */
 	public static void ln() {
 		System.out.println();
 	}
+	
+	/**
+	 * itemリストから使用したアイテムのインスタンスを削除するメソッド
+	 * @param inputNum
+	 */
+//	public static void removeFromActionList(int inputNum) {
+//		item.remove(inputNum);
+//	}
 
 }

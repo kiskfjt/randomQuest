@@ -14,11 +14,13 @@ public class ActionMagicHeal extends ActionMagic {
 		rangeMax = 60;
 	}
 	
+	// 回復対象：味方単体
 	public void playerTarget() {
 		Chr tgt = IO.selectSingleTarget(me.party.member);
 		me.targets.add(tgt);
 	}
 	
+	// 回復：30～50の範囲
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 		
