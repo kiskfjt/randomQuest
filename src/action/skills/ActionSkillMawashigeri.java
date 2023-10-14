@@ -13,12 +13,11 @@ public class ActionSkillMawashigeri extends ActionSkill {
 		multi = 120;
 		rangeMin = 80;
 		rangeMax = 120;
-		// TODO 自動生成されたコンストラクター・スタブ
 	}
 	
 	// 攻撃範囲：敵全体
 	public void playerTarget() {
-		IO.selectMultiTargets(me.party.enemy.member, me.targets);
+		IO.selectMultiTargets(me.party.enemy.member, me);
 	}
 	
 	// ダメージ：物理、掛け算方式

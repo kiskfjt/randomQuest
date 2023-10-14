@@ -3,6 +3,7 @@ package chr;
 import java.util.ArrayList;
 
 import action.Action;
+import item.Item;
 import others.IO;
 
 public abstract class Chr {
@@ -48,18 +49,20 @@ public abstract class Chr {
 	public Action action;
 	public ArrayList<Chr> targets;
 	public String jobName;
+	public ArrayList<Item> items;
+	public Item item;
 	
 	
-	public final int maxATKCoef = 2;
-	public final int maxDEFCoef = 2;
-	public final int maxMATCoef = 2;
-	public final int maxMDFCoef = 2;
-	public final int maxSPDCoef = 5;
-	public final double minATKCoef = 0.5;
-	public final double minDEFCoef = 0.5;
-	public final double minMATCoef = 0.5;
-	public final double minMDFCoef = 0.5;
-	public final double minSPDCoef = 0.1;
+	public final int MAX_ATK_COEF = 2;
+	public final int MAX_DEF_COEF = 2;
+	public final int MAX_MAT_COEF = 2;
+	public final int MAX_MDF_COEF = 2;
+	public final int MAX_SPD_COEF = 5;
+	public final double MIN_ATK_COEF = 0.5;
+	public final double MIN_DEF_COEF = 0.5;
+	public final double MIN_MAT_COEF = 0.5;
+	public final double MIN_MDF_COEF = 0.5;
+	public final double MIN_SPD_COEF = 0.1;
 	
 	public Chr(String name, int maxHP, int maxMP, int baseATK, int baseDEF, int baseMAT, int baseMDF, int baseSPD) {
 		this.name = name;
@@ -70,16 +73,16 @@ public abstract class Chr {
 		this.MAT = this.baseMAT = baseMAT;
 		this.MDF = this.baseMDF = baseMDF;
 		this.SPD = this.baseSPD = baseSPD;
-		this.maxATK = this.baseATK * maxATKCoef;
-		this.maxDEF = this.baseDEF * maxDEFCoef;
-		this.maxMAT = this.baseMAT * maxMATCoef;
-		this.maxMDF = this.baseMDF * maxMDFCoef;
-		this.maxSPD = this.baseSPD * maxSPDCoef;
-		this.minATK = (int)(this.baseATK * minATKCoef);
-		this.minDEF = (int)(this.baseDEF * minDEFCoef);
-		this.minMAT = (int)(this.baseMAT * minMATCoef);
-		this.minMDF = (int)(this.baseMDF * minMDFCoef);
-		this.minSPD = (int)(this.baseSPD * minSPDCoef);
+		this.maxATK = this.baseATK * MAX_ATK_COEF;
+		this.maxDEF = this.baseDEF * MAX_DEF_COEF;
+		this.maxMAT = this.baseMAT * MAX_MAT_COEF;
+		this.maxMDF = this.baseMDF * MAX_MDF_COEF;
+		this.maxSPD = this.baseSPD * MAX_SPD_COEF;
+		this.minATK = (int)(this.baseATK * MIN_ATK_COEF);
+		this.minDEF = (int)(this.baseDEF * MIN_DEF_COEF);
+		this.minMAT = (int)(this.baseMAT * MIN_MAT_COEF);
+		this.minMDF = (int)(this.baseMDF * MIN_MDF_COEF);
+		this.minSPD = (int)(this.baseSPD * MIN_SPD_COEF);
 		
 		DEFMulti = DEF_MULTI_DEFAULT;
 		party = null;
@@ -87,6 +90,8 @@ public abstract class Chr {
 		action = null;
 		targets = new ArrayList<>();
 		jobName = null;
+		items = new ArrayList<>();
+		item = null;
 	}
 	
 	public Chr() {
@@ -115,7 +120,7 @@ public abstract class Chr {
 	}
 	
 	public void playerCommand() {
-		action = IO.printAndSelectPCAction(name, MP, actions);
+		action = IO.selectPCAction(this, actions, items);
 	}
 	
 	public abstract void nonPlayerCommand();

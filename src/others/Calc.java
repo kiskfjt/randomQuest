@@ -2,6 +2,7 @@ package others;
 
 import action.Action;
 import chr.Chr;
+import item.Item;
 
 public class Calc {
 	public static int physSingleDmg(Chr me, Chr target) {
@@ -52,7 +53,14 @@ public class Calc {
 		IO.msgln("%sのHPが%d回復した！", target.name, value);
 	}
 	
-	public static void singleHeal(Chr me, int rangeMin, int rangeMax) {
-		singleHeal(me, me.targets.get(0), rangeMin, rangeMax);
+	public static void singleHeal(Chr me, Object obj) {
+		if (obj instanceof Action) {
+			Action act = (Action) obj;
+			singleHeal(me, me.targets.get(0), act.rangeMin, act.rangeMax);
+		} else if (obj instanceof Item) {
+			Item itm = (Item) obj;
+			singleHeal(me, me.targets.get(0), itm.rangeMin, itm.rangeMax);
+		}
 	}
+	
 }

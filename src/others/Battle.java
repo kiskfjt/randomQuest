@@ -83,20 +83,20 @@ public class Battle {
 			//   break;
 			case RESULT_ALLY_DESTROY:
 				if (ally.member.size() == 1) {
-					System.out.printf("%sははいぼくした…", ally.member.get(0).name);
+					IO.msgln("%sははいぼくした…", ally.member.get(0).name);
 				} else {
-					System.out.printf("%sたちはぜんめつした…", ally.member.get(0).name);
+					IO.msgln("%sたちはぜんめつした…", ally.member.get(0).name);
 				}
 				return result;
 			case RESULT_ENEMY_DESTROY:
 				if (enemy.member.size() == 1) {
-					System.out.printf("%sをたおした!", enemy.member.get(0).name);
+					IO.msgln("%sをたおした!", enemy.member.get(0).name);
 				} else {
-					System.out.printf("%sたちをたおした!", enemy.member.get(0).name);
+					IO.msgln("%sたちをたおした!", enemy.member.get(0).name);
 				}
 				return result;
 			case RESULT_ALL_DEAD:
-				System.out.printf("全員死んだ!", enemy.member.get(0).name);
+				IO.msgln("全員死んだ!", enemy.member.get(0).name);
 				return result;
 			}
 		}
@@ -107,7 +107,8 @@ public class Battle {
 	}
 	
 	// SPD決定に使う乱数(±X%）
-	private final int ORDER_RANDOM_RANGE = 50;
+	private final int SPD_RANGE_MIN = 50;
+	private final int SPD_RANGE_MAX = 150;
 	
 	private Chr[] addList(ArrayList<Chr> ally, ArrayList<Chr> enemy) {
 		// 味方敵含めたリストの作成
@@ -127,7 +128,7 @@ public class Battle {
 		Chr[] orderList = new Chr[allList.length];
 		for (int i = 0; i < allList.length; i++) {
 			Chr c = allList[i];
-			c.SPD = c.buffSPD + (int)(c.baseSPD * (100 - ORDER_RANDOM_RANGE + ORDER_RANDOM_RANGE * 2 * Math.random()) / 100);
+			c.SPD = c.buffSPD + (int) (c.baseSPD * IO.randomNum(SPD_RANGE_MIN, SPD_RANGE_MAX) / 100);
 			orderList[i] = c;
 		}
 		Arrays.sort(orderList, Comparator.comparing(Chr::getSPD).reversed());

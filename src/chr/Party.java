@@ -2,9 +2,9 @@ package chr;
 
 import java.util.ArrayList;
 
-import action.items.ActionItemMedHerb;
 import chr.jobs.BraveChr;
 import chr.jobs.PriestChr;
+import item.ItemMedHerb;
 import others.IO;
 
 public class Party {
@@ -22,20 +22,10 @@ public class Party {
 		for (int i = 0; i < name.length; i++) {
 			Chr chr = null;
 			// ジョブをランダム選択する
-			//chr = selectJob(name[i]);
-			
-			int jobNo = IO.randomNum(1);// ジョブ数-1を記入
-			switch (jobNo) {
-			case 0:
-				chr = new BraveChr(name[i]);
-				break;
-			case 1:
-				chr = new PriestChr(name[i]);
-				break;
-			}
+			chr = selectJob(name[i]);
 			
 			// どうぐをランダム選択する
-			//selectItem(chr);
+			selectItem(chr);
 			
 			
 			if (partyKind == PARTY_KIND_ALLY) {
@@ -92,9 +82,10 @@ public class Party {
 	private void selectItem(Chr chr) {
 		for (int i = 0; i < MAX_ITEM_NUMBER; i++) {
 			int itemNo = IO.randomNum(0);
+			
 			switch (itemNo) {
 			case 0:
-			    chr.actions.add(new ActionItemMedHerb(chr));
+			    chr.items.add(new ItemMedHerb(chr));
 			    break;
 			}
 		}

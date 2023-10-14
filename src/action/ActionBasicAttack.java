@@ -17,8 +17,7 @@ public class ActionBasicAttack extends ActionBasic {
 	}
 	
 	public void playerTarget() {
-		Chr tgt = IO.selectSingleTarget(me.party.enemy.member);
-		me.targets.add(tgt);
+		IO.selectSingleTarget(me.party.enemy.member, me);
 	}
 	
 	public void execute() {

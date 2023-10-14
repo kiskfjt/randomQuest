@@ -12,6 +12,7 @@ import action.ActionMagic;
 import action.ActionSkill;
 import chr.Chr;
 import chr.Party;
+import item.Item;
 
 public class IO {
 	private static Scanner sc = new Scanner(System.in);
@@ -66,7 +67,7 @@ public class IO {
 		System.out.println("***********************************");
 	}
 		
-	public static Action printAndSelectPCAction(String name, int MP, ArrayList<Action> actions) {
+	public static Action selectPCAction(Chr me, ArrayList<Action> actions, ArrayList<Item> items) {
 		int actionNum = 0;
 		int actionSubNum = 0;
 		String actionName = "";
@@ -97,8 +98,9 @@ public class IO {
 			}
 		}
 		
+		
 		while (true) {
-			msgln("%sの行動の番号を入力", name);
+			msgln("%sの行動の番号を入力", me.name);
 			msg("%2d.%s", 0, "こうげき");
 			msgln("%2d.%s", 1, "とくぎ　");
 			msg("%2d.%s", 2, "まほう　");
@@ -135,19 +137,36 @@ public class IO {
 					msgln("とくぎを覚えていない！");
 				} else if (actionNum == MAGIC) {
 					msgln("まほうを覚えていない！");
-				} else if (actionNum == ITEM) {
-					msgln("どうぐを持っていない！");
 				} else if (actionNum == GUARD) {
 					msgln("ぼうぎょできない！");
 				} else if (actionNum == EQUIP) {
 					msgln("なにもそうびしていない！");
 				}
 				continue;
+			
 			} else if (actionNum == ATTACK || actionNum == GUARD) {
 				action = selAction.get(0);
 				break;
-			} else if (actionNum != ATTACK && actionNum != GUARD){
-				msgln("%sの使用する%sの番号を入力", name, actionName);
+			
+			} else if (actionNum == ITEM) {
+				if (items.size() == 0) {
+					msgln("どうぐを持っていない！");
+					continue;
+				} else {
+					msgln("%sの使用する%sの番号を入力", me.name, actionName);
+					for (int i = 0; i < items.size(); i++) {
+						msgln("%d.%s", i, items.get(i).name);
+					}
+					
+					// 使うどうぐの決定
+					actionSubNum = inputNumber(items.size() - 1);
+					action = selAction.get(0);
+					me.item = items.get(actionSubNum);
+					break;
+				}
+				
+			} else {
+				msgln("%sの使用する%sの番号を入力", me.name, actionName);
 				for (int i = 0; i < selAction.size(); i++) {
 					msgln("%d.%s", i, selAction.get(i).name);
 				}
@@ -157,7 +176,7 @@ public class IO {
 				action = selAction.get(actionSubNum);
 				
 				// 呪文決定時点でもMP判定を行う
-				if (actionNum == MAGIC && ((ActionMagic) action).MPCons > MP) {
+				if (actionNum == MAGIC && ((ActionMagic) action).MPCons > me.MP) {
 					msgln("MPがたりない！");
 					continue;// TODO:ここで呪文一覧に戻るようにする
 				} else {
@@ -174,15 +193,16 @@ public class IO {
 	 * @param memList
 	 * @return
 	 */
-	public static Chr selectSingleTarget(ArrayList<Chr> memList) {
-		msgln("ターゲットを選択");
+	public static void selectSingleTarget(ArrayList<Chr> memList, Chr me) {
 		int targetNum = 0;
 		Chr targetChr = null;
+		
 		while (true) {
+			msgln("ターゲットを選択");
+			
 			for (int i = 0; i < memList.size(); i++) {
 				String name = memList.get(i).name;
-				System.out.printf(i + ".%s", name);
-				System.out.println();
+				IO.msgln(i + ".%s", name);
 			}
 			targetNum = inputNumber(memList.size() - 1);
 			targetChr = memList.get(targetNum);
@@ -193,13 +213,14 @@ public class IO {
 				continue;
 			}
 		}
-		return targetChr;
+		
+		me.targets.add(targetChr);
 	}
 	
-	public static void selectMultiTargets(ArrayList<Chr> memList, ArrayList<Chr> tgtList) {
+	public static void selectMultiTargets(ArrayList<Chr> memList, Chr me) {
 		for (Chr c : memList) {
 			if(c.HP > 0) {
-				tgtList.add(c);
+				me.targets.add(c);
 			}
 		}
 		
@@ -290,11 +311,11 @@ public class IO {
 	}
 	
 	/**
-	 * itemリストから使用したアイテムのインスタンスを削除するメソッド
+	 * itemsリストから使用したアイテムのインスタンスを削除するメソッド
 	 * @param inputNum
 	 */
-//	public static void removeFromActionList(int inputNum) {
-//		item.remove(inputNum);
-//	}
+	public static void removeFromItemList(Chr me, Item item) {
+		me.items.remove(item);
+	}
 
 }
