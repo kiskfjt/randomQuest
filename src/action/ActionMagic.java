@@ -12,7 +12,8 @@ public class ActionMagic extends Action {
 	// 消費MP
 	public int MPCons;
 
-	public void playerTarget() {
+	public boolean playerTarget() {
+		return false;
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}

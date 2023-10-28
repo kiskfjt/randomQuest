@@ -16,8 +16,8 @@ public class ActionSkillMawashigeri extends ActionSkill {
 	}
 	
 	// 攻撃範囲：敵全体
-	public void playerTarget() {
-		IO.selectMultiTargets(me.party.enemy.member, me);
+	public boolean playerTarget() {
+		return IO.selectMultiTargets(me.party.enemy.member, me);
 	}
 	
 	// ダメージ：物理、掛け算方式

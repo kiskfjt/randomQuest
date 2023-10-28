@@ -10,7 +10,8 @@ public class ActionBasicGuard extends ActionBasic {
 		me.DEFMulti = 2;
 	}
 
-	public void playerTarget() {
+	public boolean playerTarget() {
+		return true;
 		// ターゲット選択はなし
 	}
 

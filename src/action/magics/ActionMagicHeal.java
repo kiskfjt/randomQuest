@@ -16,8 +16,8 @@ public class ActionMagicHeal extends ActionMagic {
 	}
 	
 	// 回復対象：味方単体
-	public void playerTarget() {
-		IO.selectSingleTarget(me.party.member, me);
+	public boolean playerTarget() {
+		return IO.selectSingleTarget(me.party.member, me);
 	}
 	
 	// 回復：40～60の範囲

@@ -1,10 +1,10 @@
-package item;
+package equipment;
 
 import action.Action;
 import chr.Chr;
 
-public abstract class Item {
-	public Item(Chr me) {
+public abstract class Equipment {
+	public Equipment(Chr me) {
 		this.me = me;
 		this.target = this::playerTarget;
 		this.execute = this::execute;

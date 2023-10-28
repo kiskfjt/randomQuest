@@ -5,7 +5,7 @@ import chr.Chr;
 import item.Item;
 
 public class Calc {
-	public static int physSingleDmg(Chr me, Chr target) {
+	public static void physSingleDmg(Chr me, Chr target) {
 		int Dmg = 0;
 		Dmg = (int) (me.ATK * me.action.multi * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
 				/ Action.MULTI_DEFAULT_VALUE / Action.RANGE_DEFAULT_VALUE
@@ -15,23 +15,50 @@ public class Calc {
 		} else if (Dmg > Chr.MAX_HP) {
 			Dmg = Chr.MAX_HP;
 		}
-		return Dmg;
+		IO.msgln("%sに%dのダメージ！", target.name, Dmg);
+		target.HP -= Dmg;
+		IO.judgeHP(me, target);
 	}
 	
-	public static int physSingleDmg(Chr me) {
-		return physSingleDmg(me, me.targets.get(0));
+	public static void physSingleDmg(Chr me) {
+		physSingleDmg(me, me.targets.get(0));
 	}
 	
 	public static void physMultiDmg(Chr me) {
-		int Dmg = 0;
 		for (Chr c : me.targets) {
 			if (c.isDead()) {
 				System.out.println(c.name + "はしんでいる！");
 			} else if (c.isAlive()) {
-				Dmg = physSingleDmg(me, c);
-				IO.msgln("%sに%dのダメージ！", c.name, Dmg);
-				c.HP -= Dmg;
-				IO.judgeHP(me, c);
+				physSingleDmg(me, c);
+			}
+		}
+	}
+	
+	public static void mgcSingleDmg(Chr me, Chr target) {
+		int Dmg = 0;
+		Dmg = (int) (me.MAT * me.action.multi * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
+				/ Action.MULTI_DEFAULT_VALUE / Action.RANGE_DEFAULT_VALUE
+				- target.MDF) / target.DEFMulti;
+		if (Dmg < 0) {
+			Dmg = 0;
+		} else if (Dmg > Chr.MAX_HP) {
+			Dmg = Chr.MAX_HP;
+		}
+		IO.msgln("%sに%dのダメージ！", target.name, Dmg);
+		target.HP -= Dmg;
+		IO.judgeHP(me, target);
+	}
+	
+	public static void mgcSingleDmg(Chr me) {
+		mgcSingleDmg(me, me.targets.get(0));
+	}
+	
+	public static void mgcMultiDmg(Chr me) {
+		for (Chr c : me.targets) {
+			if (c.isDead()) {
+				System.out.println(c.name + "はしんでいる！");
+			} else if (c.isAlive()) {
+				mgcSingleDmg(me, c);
 			}
 		}
 	}

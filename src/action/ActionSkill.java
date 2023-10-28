@@ -10,7 +10,8 @@ public class ActionSkill extends Action {
 	}
 
 	@Override
-	public void playerTarget() {
+	public boolean playerTarget() {
+		return false;
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}

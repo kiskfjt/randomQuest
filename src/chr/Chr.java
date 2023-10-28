@@ -1,8 +1,10 @@
 package chr;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import action.Action;
+import equipment.Equipment;
 import item.Item;
 import others.IO;
 
@@ -51,6 +53,8 @@ public abstract class Chr {
 	public String jobName;
 	public ArrayList<Item> items;
 	public Item item;
+	public ArrayList<Equipment> equipments;
+	public Equipment equipment;
 	
 	
 	public final int MAX_ATK_COEF = 2;
@@ -92,6 +96,8 @@ public abstract class Chr {
 		jobName = null;
 		items = new ArrayList<>();
 		item = null;
+		equipments = new ArrayList<>();
+		equipment = null;
 	}
 	
 	public Chr() {
@@ -110,7 +116,8 @@ public abstract class Chr {
 		return HP <= 0;
 	}
 	
-	public Runnable command;
+	// public Runnable command;
+	public Supplier<Boolean> command;
 	
 	public void setToPC() {
 		command = this::playerCommand;
@@ -119,9 +126,9 @@ public abstract class Chr {
 		}
 	}
 	
-	public void playerCommand() {
-		action = IO.selectPCAction(this, actions, items);
+	public boolean playerCommand() {
+		return IO.selectPCAction(this);
 	}
 	
-	public abstract void nonPlayerCommand();
+	public abstract boolean nonPlayerCommand();
 }

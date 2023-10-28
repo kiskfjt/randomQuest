@@ -7,9 +7,8 @@ import action.skills.ActionSkillMawashigeri;
 public class BossChr extends Chr {
 
 	@Override
-	public void nonPlayerCommand() {
-		// TODO 自動生成されたメソッド・スタブ
-		
+	public boolean nonPlayerCommand() {
+		return false;
 	}
 	
 	public BossChr() {

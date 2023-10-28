@@ -74,6 +74,8 @@ public class Battle {
 			
 			
 			// ゲーム継続判定
+			IO.ln();
+			
 			switch (result) {
 			case RESULT_NOTYET:
 				break;
@@ -87,16 +89,25 @@ public class Battle {
 				} else {
 					IO.msgln("%sたちはぜんめつした…", ally.member.get(0).name);
 				}
+				IO.msgln("**********************");
+				IO.msgln("%10s", "ゲームオーバー！");
+				IO.msgln("**********************");
 				return result;
 			case RESULT_ENEMY_DESTROY:
 				if (enemy.member.size() == 1) {
 					IO.msgln("%sをたおした!", enemy.member.get(0).name);
 				} else {
-					IO.msgln("%sたちをたおした!", enemy.member.get(0).name);
+					IO.msgln("%sたちをたおした!", enemy.member.get(1).name);
 				}
+				IO.msgln("**********************");
+				IO.msgln("%10s", "ゲームクリア！");
+				IO.msgln("**********************");
 				return result;
 			case RESULT_ALL_DEAD:
 				IO.msgln("全員死んだ!", enemy.member.get(0).name);
+				IO.msgln("**********************");
+				IO.msgln("%10s", "ゲームオーバー！");
+				IO.msgln("**********************");
 				return result;
 			}
 		}
@@ -115,6 +126,7 @@ public class Battle {
 		ArrayList<Chr> tempList = new ArrayList<>();
 		tempList.addAll(ally);
 		tempList.addAll(enemy);
+		
 		
 		Chr[] allList = new Chr[tempList.size()];
 		for (int i = 0; i < tempList.size(); i++) {
@@ -137,7 +149,9 @@ public class Battle {
 	}
 	
 	private void command(Chr[] allList) {
-		for (Chr chr : allList) {
+		boolean isBack = false;
+		for (int i = 0; i < allList.length; i++) {
+			Chr chr = allList[i];
 			if (chr.action != null) {
 				chr.targets.clear();
 			}
@@ -145,10 +159,22 @@ public class Battle {
 			
 			// 死んでたらスキップ
 			if (chr.isDead()) {
-				continue;
+				if (i > 0 && isBack) {
+					i -= 2;
+					continue;
+				} else {
+					continue;
+				}
 			}
-			chr.command.run();
-			chr.action.target.run();
+			
+			isBack = !chr.command.get();
+			if (isBack) {
+				if (i == 0) {
+					i--;// PCActionがセットされていない、かつ先頭キャラの場合はもう一度コマンド選択する
+				} else {
+					i -= 2;// PCActionがセットされていない、かつ先頭キャラでない場合は1つ前のキャラのコマンド選択に戻る
+				}
+			}
 		}
 	}
 	

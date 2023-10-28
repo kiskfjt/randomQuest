@@ -12,12 +12,16 @@ public class ItemMedHerb extends Item {
 		rangeMax = 50;
 	}
 
-	// 回復対象：味方単体
-	public void playerTarget() {
-		IO.selectSingleTarget(me.party.member, me);
+	/**
+	 *  回復対象：味方単体
+	 */
+	public boolean playerTarget() {
+		return IO.selectSingleTarget(me.party.member, me);
 	}
 
-	// 回復：30～50の範囲、ヒールより少し劣る
+	/**
+	 * 回復：30～50の範囲、ヒールより少し劣る
+	 */
 	public void execute() {
 		IO.msgln("【%sは%sをつかった！】", me.name, name);
 

@@ -17,7 +17,7 @@ public class PriestChr extends Chr {
 	private final int A_ITEM = 3;
 	private final int MAX_HP = 9999;
 	public PriestChr(String name) {
-		super(name, 250, 250, 30, 20, 50, 30, 15);
+		super(name, 100, 100, 30, 20, 50, 30, 15);
 		
 		jobName = "そうりょ";
 		
@@ -42,46 +42,49 @@ public class PriestChr extends Chr {
 	 * 敵パーティーメンバーのHPがmaxHPの半分以下の時は「ヒール」優先
 	 * 回復をしないときは、「こうげき」と「ぼうぎょ」からランダム選択
 	 */
-	public void nonPlayerCommand() {
+	public boolean nonPlayerCommand() {
 		ArrayList<Chr> list = new ArrayList<>(party.member);
 		for (Chr c : list) {
 			ActionMagic actionMagic = (ActionMagic) actions.get(A_HEAL);
 			if (MP >= actionMagic.MPCons && c.HP <= c.maxHP / 2) {
 				action = actions.get(A_HEAL);
-				action.target = this::healTarget;
+				// action.target = this::healTarget;
 			} else {
 				int actionNum = IO.randomNum(A_GUARD);
 				if (actionNum == A_ATTACK) {
 					action = actions.get(A_ATTACK);
-					action.target = this::attackTarget;
+					// action.target = this::attackTarget;
 				} else if (actionNum == A_GUARD) {
 					action = actions.get(A_GUARD);
-					action.target = this::guardTarget;
+					// action.target = this::guardTarget;
 				}
 			}
 		}
+		return action.target.get();
 	}
 	
 	/**
 	 * NPC「そうりょ」の「こうげき」のターゲット決定メソッド
 	 * 敵パーティーからランダムに1体選択
 	 */
-	public void attackTarget() {
+	public boolean attackTarget() {
 		ArrayList<Chr> list = new ArrayList<>(party.enemy.member);
 	    int targetNum = 0;
 	    Chr target = null;
 	    while (true) {
-	    	targetNum = (int) (Math.random() * list.size());
+	    	targetNum = IO.randomNum(list.size() - 1);
 	    	target = list.get(targetNum);
 	    	if (target.isAlive()) {
 	    		this.targets.add(target);
 	    		break;
 	    	}
 	    }
+	    return true;
 	}
 	
-	public void guardTarget() {
+	public boolean guardTarget() {
 		targets.clear();
+		return true;
 	}
 	
 	/**
@@ -89,10 +92,11 @@ public class PriestChr extends Chr {
 	 * 一番HPの低い味方を1体選ぶ
 	 * 最低HP同値の場合はmemberリストの番号の小さいほうが優先
 	 */
-	public void healTarget() {
+	public boolean healTarget() {
 		int targetNum = checkLowestHP();
 		Chr target = party.member.get(targetNum);
 		targets.add(target);
+		return true;
 	}
 	
 	public int checkLowestHP() {

@@ -15,7 +15,7 @@ public class BraveChr extends Chr {
 	private final int A_MAWASHIGERI = 2;
 	private final int A_ITEM = 3;
 	public BraveChr(String name) {
-		super(name, 500, 100, 50, 30, 50, 30, 25);
+		super(name, 200, 50, 50, 30, 50, 30, 25);
 		
 		jobName = "ゆうしゃ";
 		
@@ -38,48 +38,52 @@ public class BraveChr extends Chr {
 	 * NPC「ゆうしゃ」の行動選択メソッド
 	 * 「こうげき」、「ぼうぎょ」、「まわしげり」からランダムに選択
 	 */
-	public void nonPlayerCommand() {
+	public boolean nonPlayerCommand() {
 		int actionNum = IO.randomNum(A_MAWASHIGERI);
 		if (actionNum == A_ATTACK) {
 			action = actions.get(A_ATTACK);
-			action.target = this::attackTarget;
+			// action.target = this::attackTarget;
 		} else if (actionNum == A_GUARD) {
 			action = actions.get(A_GUARD);
-			action.target = this::guardTarget;
+			// action.target = this::guardTarget;
 		} else if (actionNum == A_MAWASHIGERI) {
 			action = actions.get(A_MAWASHIGERI);
-			action.target = this::mawashigeriTarget;
+			// action.target = this::mawashigeriTarget;
 		}
+		return action.target.get();
 	}
 	
 	/**
 	 * NPC「ゆうしゃ」の「こうげき」のターゲット決定メソッド
 	 * 敵パーティーからランダムに1体選択
 	 */
-	public void attackTarget() {
+	public boolean attackTarget() {
 		ArrayList<Chr> list = new ArrayList<>(party.enemy.member);
 	    int targetNum = 0;
 	    Chr target = null;
 	    while (true) {
-	    	targetNum = (int) (Math.random() * list.size());
+	    	targetNum = IO.randomNum(list.size() - 1);
 	    	target = list.get(targetNum);
 	    	if (target.isAlive()) {
 	    		this.targets.add(target);
 	    		break;
 	    	}
 	    }
+	    return true;
 	}
 	
-	public void guardTarget() {
+	public boolean guardTarget() {
 		targets.clear();
+		return true;
 	}
 	
-	public void mawashigeriTarget() {
+	public boolean mawashigeriTarget() {
 		ArrayList<Chr> list = new ArrayList<>(party.enemy.member);
 		for (Chr c : list) {
 			if (c.isAlive()) {
 				targets.add(c);
 			}
 		}
+		return true;
 	}
 }
