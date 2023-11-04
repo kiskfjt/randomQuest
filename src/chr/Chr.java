@@ -11,6 +11,7 @@ import others.IO;
 public abstract class Chr {
 	private final int DEF_MULTI_DEFAULT = 1;
 	public static final int MAX_HP = 9999;
+	private final int LV_DEFAULT = 1;
 	
 	
 	public String name;
@@ -44,6 +45,7 @@ public abstract class Chr {
 	public int buffMDF;
 	public int buffSPD;
 	
+	public int Lv;
 	public int DEFMulti;
 	
 	public Party party;
@@ -98,6 +100,7 @@ public abstract class Chr {
 		item = null;
 		equipments = new ArrayList<>();
 		equipment = null;
+		Lv = LV_DEFAULT;
 	}
 	
 	public Chr() {

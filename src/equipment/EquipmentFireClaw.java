@@ -9,6 +9,8 @@ public class EquipmentFireClaw extends Equipment {
 		super(me);
 		name = "炎の爪";
 		multi = 120;
+		ATK = 30;
+		addStatus();
 	}
 	
 	// 攻撃対象：敵単体
@@ -18,7 +20,7 @@ public class EquipmentFireClaw extends Equipment {
 	
 	// 
 	public void execute() {
-		IO.msgln("【%sは%sをつかった！】", me.name, name);
+		IO.msgln("【%sは%sをふりかざした！】", me.name, name);
 		
 		Calc.mgcSingleDmg(me);
 	}

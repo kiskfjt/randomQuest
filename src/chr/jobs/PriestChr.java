@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import action.ActionBasicAttack;
 import action.ActionBasicGuard;
+import action.ActionEquipment;
 import action.ActionItem;
 import action.ActionMagic;
 import action.magics.ActionMagicHeal;
@@ -15,6 +16,7 @@ public class PriestChr extends Chr {
 	private final int A_GUARD = 1;
 	private final int A_HEAL = 2;
 	private final int A_ITEM = 3;
+	private final int A_EQUIP = 3;
 	private final int MAX_HP = 9999;
 	public PriestChr(String name) {
 		super(name, 100, 100, 30, 20, 50, 30, 15);
@@ -25,6 +27,7 @@ public class PriestChr extends Chr {
 		actions.add(new ActionBasicGuard(this));
 		actions.add(new ActionMagicHeal(this));
 		actions.add(new ActionItem(this));
+		actions.add(new ActionEquipment(this));
 		
 		setToNPC();
 	}

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import chr.jobs.BraveChr;
 import chr.jobs.PriestChr;
+import equipment.Equipment;
+import equipment.EquipmentFireClaw;
+import equipment.EquipmentGoldBracelet;
+import equipment.EquipmentLeatherHat;
+import equipment.EquipmentLidOfPod;
+import equipment.EquipmentNomalClothes;
 import item.ItemMedHerb;
 import others.IO;
 
@@ -12,6 +18,9 @@ public class Party {
 	public static final int PARTY_KIND_ENEMY = 1;
 	
 	private final int MAX_ITEM_NUMBER = 10;
+	private final int LV_MAX_VALUE = 100;
+	private final int MULTI_BY_LV = 2;
+	private final int MULTI_BY_LV_DEFAULT = 100;
 	
 	public ArrayList<Chr> member;
 	public Party enemy;
@@ -24,9 +33,15 @@ public class Party {
 			// ジョブをランダム選択する
 			chr = selectJob(name[i]);
 			
+			// レベルをランダム選択する
+			chr.Lv = IO.randomNum(LV_MAX_VALUE);
+			setStatus(chr);
+			
+			// そうびをランダム選択する
+			selectEquipment(chr);
+			
 			// どうぐをランダム選択する
 			selectItem(chr);
-			
 			
 			if (partyKind == PARTY_KIND_ALLY) {
 				chr.setToPC();
@@ -89,5 +104,74 @@ public class Party {
 			    break;
 			}
 		}
+	}
+	
+	private void selectEquipment(Chr chr) {
+		chr.equipments.add(selectWeapon(chr));
+		chr.equipments.add(selectArmor(chr));
+		chr.equipments.add(selectShield(chr));
+		chr.equipments.add(selectHelmet(chr));
+		chr.equipments.add(selectAccessory(chr));
+	}
+	
+	private Equipment selectWeapon(Chr chr) {
+		int weaponNo = IO.randomNum(0);
+		
+		switch (weaponNo) {
+		case 0:
+			return new EquipmentFireClaw(chr);
+		}
+		return null;
+	}
+	
+	private Equipment selectArmor(Chr chr) {
+		int armorNo = IO.randomNum(0);
+		
+		switch (armorNo) {
+		case 0:
+			return new EquipmentNomalClothes(chr);
+		}
+		return null;
+	}
+	
+	private Equipment selectShield(Chr chr) {
+		int sldNo = IO.randomNum(0);
+		
+		switch (sldNo) {
+		case 0:
+			return new EquipmentLidOfPod(chr);
+		}
+		return null;
+	}
+	
+	private Equipment selectHelmet(Chr chr) {
+		int hlmNo = IO.randomNum(0);
+		
+		switch (hlmNo) {
+		case 0:
+			return new EquipmentLeatherHat(chr);
+		}
+		return null;
+	}
+	
+	private Equipment selectAccessory(Chr chr) {
+		int accNo = IO.randomNum(0);
+		
+		switch (accNo) {
+		case 0:
+			return new EquipmentGoldBracelet(chr);
+		}
+		return null;
+	}
+	
+	private void setStatus(Chr chr) {
+		int multi = chr.Lv * MULTI_BY_LV;
+		chr.HP = chr.maxHP = chr.maxHP * multi / MULTI_BY_LV_DEFAULT;
+		chr.MP = chr.maxMP += chr.maxMP * multi / MULTI_BY_LV_DEFAULT;
+		chr.ATK = chr.baseATK += chr.baseATK * multi / MULTI_BY_LV_DEFAULT;
+		chr.DEF = chr.baseDEF += chr.baseDEF * multi / MULTI_BY_LV_DEFAULT;
+		chr.MAT = chr.baseMAT += chr.baseMAT * multi / MULTI_BY_LV_DEFAULT;
+		chr.MDF = chr.baseMDF += chr.baseMDF * multi / MULTI_BY_LV_DEFAULT;
+		chr.SPD = chr.baseSPD += chr.baseSPD * multi / MULTI_BY_LV_DEFAULT;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import action.ActionBasicAttack;
 import action.ActionBasicGuard;
+import action.ActionEquipment;
 import action.ActionItem;
 import action.skills.ActionSkillMawashigeri;
 import chr.Chr;
@@ -14,6 +15,8 @@ public class BraveChr extends Chr {
 	private final int A_GUARD = 1;
 	private final int A_MAWASHIGERI = 2;
 	private final int A_ITEM = 3;
+	private final int A_EQUIP = 4;
+	
 	public BraveChr(String name) {
 		super(name, 200, 50, 50, 30, 50, 30, 25);
 		
@@ -23,6 +26,7 @@ public class BraveChr extends Chr {
 		actions.add(new ActionBasicGuard(this));
 		actions.add(new ActionSkillMawashigeri(this));
 		actions.add(new ActionItem(this));
+		actions.add(new ActionEquipment(this));
 		
 		setToNPC();
 	}

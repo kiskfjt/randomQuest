@@ -196,6 +196,8 @@ public class Battle {
 			// action実行
 			c.action.execute();
 			
+			IO.enter();
+			
 			boolean allyDestroy = ally.isZenmetsu();
 			boolean enemyDestroy = enemy.isZenmetsu();
 			if (allyDestroy && enemyDestroy) {

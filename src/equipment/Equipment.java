@@ -1,30 +1,30 @@
 package equipment;
 
-import action.Action;
 import chr.Chr;
+import item.Item;
 
-public abstract class Equipment {
+public abstract class Equipment extends Item {
+	
 	public Equipment(Chr me) {
-		this.me = me;
-		this.target = this::playerTarget;
-		this.execute = this::execute;
-		multi = Action.MULTI_DEFAULT_VALUE;
-		rangeMin = Action.RANGE_MIN_DEFAULT_VALUE;
-		rangeMax = Action.RANGE_MAX_DEFAULT_VALUE;
+		super(me);
+		addStatus();
 	}
 	
-	public Chr me;
-	public Runnable target;
-	public Runnable execute;
-	public String name;
+	public int HP = 0;
+	public int MP = 0;
+	public int ATK = 0;
+	public int DEF = 0;
+	public int MAT = 0;
+	public int MDF = 0;
+	public int SPD = 0;
 	
-	// 攻撃の倍率
-	public int multi;
-
-	// 攻撃、回復等の範囲の最低値、最大値
-	public int rangeMin;
-	public int rangeMax;
-	
-	public abstract boolean playerTarget();
-	public abstract void execute();
+	public void addStatus() {
+		me.HP = me.maxHP += HP;
+		me.MP = me.maxMP += MP;
+		me.ATK = me.baseATK += ATK;
+		me.DEF = me.baseDEF += DEF;
+		me.MAT = me.baseMAT += MAT;
+		me.MDF = me.baseMDF += MDF;
+		me.SPD = me.baseSPD += SPD;
+	}
 }

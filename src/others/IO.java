@@ -12,6 +12,7 @@ import action.ActionMagic;
 import action.ActionSkill;
 import chr.Chr;
 import chr.Party;
+import equipment.Equipment;
 import item.Item;
 
 public class IO {
@@ -35,6 +36,7 @@ public class IO {
 	private static ArrayList<Action> selAction;
 	private static String actionName;
 	private static int actionSubNum;
+	private static final String PROMPT_WAIT = "[ENTER]";
 
 	public static void printStatus(ArrayList<Chr> member) {
 		msgln("***********************************");
@@ -70,10 +72,16 @@ public class IO {
 		//System.out.println();
 		//System.out.printf("%3s", "SPD");
 		ln();
-		msg("%3s", "job");
+		msg("%3s", "JOB");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%5s", member.get(i).jobName);
 		}
+		ln();
+		msg("%3s", "Lv");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%8s", member.get(i).Lv);
+		}
+		
 
 		System.out.println();
 		System.out.println("***********************************");
@@ -151,6 +159,7 @@ public class IO {
 
 	public static boolean selectMainAction(Chr me) {
 		ArrayList<Item> items = me.items;
+		ArrayList<Equipment> equipments = me.equipments;
 		boolean isSetMainAction = false;
 		while (true) {
 			msgln("%sの行動の番号を入力", me.name);
@@ -200,14 +209,15 @@ public class IO {
 				} else if (actionNum == GUARD) {
 					msgln("ぼうぎょできない！");
 					ln();
-				} else if (actionNum == EQUIP) {
-					msgln("なにもそうびしていない！");
-					ln();
 				}
 				continue;
 
 			} else if (actionNum == ITEM && items.size() == 0) {
 				msgln("どうぐを持っていない！");
+				ln();
+				continue;
+			} else if (actionNum == EQUIP && equipments.size() == 0) {
+				msgln("なにもそうびしていない！");
 				ln();
 				continue;
 			} else {
@@ -220,6 +230,7 @@ public class IO {
 
 	public static boolean selectSubAction(Chr me) {
 		ArrayList<Item> items = me.items;
+		ArrayList<Equipment> equipments = me.equipments;
 
 		if (actionNum == ATTACK || actionNum == GUARD) {
 			me.action = selAction.get(0);
@@ -241,6 +252,25 @@ public class IO {
 
 			me.action = selAction.get(0);
 			me.item = items.get(actionSubNum);
+		
+		} else if (actionNum == EQUIP) {
+			msgln("%sの使用する%sの番号を入力", me.name, actionName);
+			for (int i = 0; i < equipments.size(); i++) {
+				msgln("%d.%s", i, equipments.get(i).name);
+			}
+			msgln("%d.%s", equipments.size(), "戻る");
+
+			// 使うそうびの決定
+			actionSubNum = inputNumber(equipments.size());
+
+			// 戻るを選択したときはメインアクションの選択に戻る
+			if (actionSubNum == equipments.size()) {
+				return false;
+			}
+			
+			me.action = selAction.get(0);
+			me.equipment = equipments.get(actionSubNum);
+		
 
 		} else {
 			msgln("%sの使用する%sの番号を入力", me.name, actionName);
@@ -417,5 +447,9 @@ public class IO {
 	public static void removeFromItemList(Chr me, Item item) {
 		me.items.remove(item);
 	}
-
+	
+	public static void enter() {
+		msg(PROMPT_WAIT);
+		sc.nextLine();
+	}
 }
