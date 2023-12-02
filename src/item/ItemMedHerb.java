@@ -27,7 +27,7 @@ public class ItemMedHerb extends Item {
 
 		Calc.singleHeal(me, this);
 
-	// このインスタンスをitemリストから削除
+	    // このインスタンスをitemリストから削除
 	    IO.removeFromItemList(me, this);
 	}
 }

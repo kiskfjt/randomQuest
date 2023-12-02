@@ -44,16 +44,17 @@ public class BraveChr extends Chr {
 	 */
 	public boolean nonPlayerCommand() {
 		int actionNum = IO.randomNum(A_MAWASHIGERI);
-		if (actionNum == A_ATTACK) {
-			action = actions.get(A_ATTACK);
-			// action.target = this::attackTarget;
-		} else if (actionNum == A_GUARD) {
-			action = actions.get(A_GUARD);
-			// action.target = this::guardTarget;
-		} else if (actionNum == A_MAWASHIGERI) {
-			action = actions.get(A_MAWASHIGERI);
-			// action.target = this::mawashigeriTarget;
-		}
+//		if (actionNum == A_ATTACK) {
+//			action = actions.get(A_ATTACK);
+//			// action.target = this::attackTarget;
+//		} else if (actionNum == A_GUARD) {
+//			action = actions.get(A_GUARD);
+//			// action.target = this::guardTarget;
+//		} else if (actionNum == A_MAWASHIGERI) {
+//			action = actions.get(A_MAWASHIGERI);
+//			// action.target = this::mawashigeriTarget;
+//		}
+		action = actions.get(actionNum);
 		return action.target.get();
 	}
 	

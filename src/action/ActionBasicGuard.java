@@ -7,10 +7,10 @@ public class ActionBasicGuard extends ActionBasic {
 	public ActionBasicGuard(Chr me) {
 		super(me);
 		name = "ぼうぎょ";
-		me.DEFMulti = 2;
 	}
 
 	public boolean playerTarget() {
+		me.DEFNext = 2.0;
 		return true;
 		// ターゲット選択はなし
 	}

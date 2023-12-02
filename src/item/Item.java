@@ -19,11 +19,11 @@ public abstract class Item {
 	public String name;
 	
 	// 攻撃の倍率
-	public int multi;
+	public double multi;
 
 	// 攻撃、回復等の範囲の最低値、最大値
-	public int rangeMin;
-	public int rangeMax;
+	public double rangeMin;
+	public double rangeMax;
 	
 	public abstract boolean playerTarget();
 	public abstract void execute();

@@ -8,9 +8,9 @@ public class ActionBasicAttack extends ActionBasic {
 	public ActionBasicAttack(Chr me) {
 		super(me);
 		name = "こうげき";
-		multi = 100;
-		rangeMin = 80;
-		rangeMax = 120;
+		multi = 50;
+		rangeMin = 0.8;
+		rangeMax = 1.2;
 	}
 	
 	public void action() {

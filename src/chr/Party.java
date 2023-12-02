@@ -11,6 +11,7 @@ import equipment.EquipmentLeatherHat;
 import equipment.EquipmentLidOfPod;
 import equipment.EquipmentNomalClothes;
 import item.ItemMedHerb;
+import item.ItemPhoenixTail;
 import others.IO;
 
 public class Party {
@@ -19,7 +20,6 @@ public class Party {
 	
 	private final int MAX_ITEM_NUMBER = 10;
 	private final int LV_MAX_VALUE = 100;
-	private final int MULTI_BY_LV = 2;
 	private final int MULTI_BY_LV_DEFAULT = 100;
 	
 	public ArrayList<Chr> member;
@@ -96,12 +96,16 @@ public class Party {
 	
 	private void selectItem(Chr chr) {
 		for (int i = 0; i < MAX_ITEM_NUMBER; i++) {
-			int itemNo = IO.randomNum(0);
+			int sumOfItems = 2;
+			int itemNo = IO.randomNum(sumOfItems - 1);
 			
 			switch (itemNo) {
 			case 0:
-			    chr.items.add(new ItemMedHerb(chr));
-			    break;
+				chr.items.add(new ItemMedHerb(chr));
+				break;
+			case 1:
+				chr.items.add(new ItemPhoenixTail(chr));
+				break;
 			}
 		}
 	}
@@ -165,13 +169,12 @@ public class Party {
 	}
 	
 	private void setStatus(Chr chr) {
-		int multi = chr.Lv * MULTI_BY_LV;
-		chr.HP = chr.maxHP = chr.maxHP * multi / MULTI_BY_LV_DEFAULT;
-		chr.MP = chr.maxMP += chr.maxMP * multi / MULTI_BY_LV_DEFAULT;
-		chr.ATK = chr.baseATK += chr.baseATK * multi / MULTI_BY_LV_DEFAULT;
-		chr.DEF = chr.baseDEF += chr.baseDEF * multi / MULTI_BY_LV_DEFAULT;
-		chr.MAT = chr.baseMAT += chr.baseMAT * multi / MULTI_BY_LV_DEFAULT;
-		chr.MDF = chr.baseMDF += chr.baseMDF * multi / MULTI_BY_LV_DEFAULT;
-		chr.SPD = chr.baseSPD += chr.baseSPD * multi / MULTI_BY_LV_DEFAULT;
+		chr.HP = chr.maxHP += chr.maxHP * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.MP = chr.maxMP += chr.maxMP * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.ATK = chr.baseATK += chr.baseATK * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.DEF = chr.baseDEF += chr.baseDEF * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.MAT = chr.baseMAT += chr.baseMAT * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.MDF = chr.baseMDF += chr.baseMDF * chr.Lv / MULTI_BY_LV_DEFAULT;
+		chr.SPD = chr.baseSPD += chr.baseSPD * chr.Lv / MULTI_BY_LV_DEFAULT;
 	}
 }

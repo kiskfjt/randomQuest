@@ -5,25 +5,26 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionSkillMawashigeri extends ActionSkill {
+public class ActionSkillShippu extends ActionSkill {
 
-	public ActionSkillMawashigeri(Chr me) {
+	public ActionSkillShippu(Chr me) {
 		super(me);
-		name = "まわしげり";
-		multi = 50;
+		name = "しっぷう突き";
+		multi = 40;
 		rangeMin = 0.8;
 		rangeMax = 1.2;
 	}
 	
-	// 攻撃範囲：敵全体
+	// 攻撃範囲：敵単体
 	public boolean playerTarget() {
-		return IO.selectMultiTargets(me.party.enemy.member, me);
+		me.onceBuffSPD = me.MAX_SPD;
+		return IO.selectSingleTarget(me.party.enemy.member, me);
 	}
-	
+
 	// ダメージ：物理、掛け算方式
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
-		
-		Calc.physMultiDmg(me);
+
+		Calc.physSingleDmg(me);
 	}
 }

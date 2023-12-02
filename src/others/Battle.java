@@ -19,7 +19,7 @@ public class Battle {
 	public int turn;
 	
 	public String[] allyName = {"のざわ", "とぐち", "さとう", "ふじた"};
-	public String[] enemyName = {"みぎて", "おそざわ", "ひだりて"};
+	// public String[] enemyName = {"みぎて", "おそざわ", "ひだりて"};
 	// public Chr[] enemyChr = {new BossChr(), new BossChr(), new BossChr()};
 	
 	public Party ally;
@@ -32,15 +32,15 @@ public class Battle {
 //		enemy.enemy = ally;
 	}
 	
-	public void init() {
+	public void init(String[] enemyName, Chr[] enemyChr) {
 //		MakeParty makeParty = new MakeParty();
 //		ally.member = makeParty.makeParty(allyName, MakeParty.PARTY_KIND_ALLY);
 //		enemy.member = makeParty.makeParty(enemyName, MakeParty.PARTY_KIND_ENEMY);
 
 		ally = new Party(allyName, Party.PARTY_KIND_ALLY);
 		
-		enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY);// 敵のジョブランダム選択
-		// enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY, enemyChr);
+		// enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY);// 敵のジョブランダム選択
+		enemy = new Party(enemyName, Party.PARTY_KIND_ENEMY, enemyChr);// 敵のジョブ指定版
 		
 		ally.enemy = enemy;
 		enemy.enemy = ally;
@@ -59,15 +59,17 @@ public class Battle {
 			IO.printStatus(ally.member);
 			IO.printStatus(enemy.member);
 			
-			
-			// 行動順決定
+			// 敵味方配列作成
 			Chr[] allList = addList(ally.member, enemy.member);// 行動選択はこちらを使う
-			Chr[] orderList = makeOrder(allList);// 行動実行時はこちらを使う
 			
+			// 行動ターン数初期化、1回のみのバフ初期化
+			setActionTurn(allList);
 			
 			// 行動決定
 			command(allList);
 			
+			// 行動順決定
+			Chr[] orderList = makeOrder(allList);// 行動実行時はこちらを使う
 			
 			// 行動実行
 			int result = execute(orderList);
@@ -140,7 +142,7 @@ public class Battle {
 		Chr[] orderList = new Chr[allList.length];
 		for (int i = 0; i < allList.length; i++) {
 			Chr c = allList[i];
-			c.SPD = c.buffSPD + (int) (c.baseSPD * IO.randomNum(SPD_RANGE_MIN, SPD_RANGE_MAX) / 100);
+			c.SPD = c.buffSPD + c.onceBuffSPD + (int) (c.baseSPD * IO.randomNum(SPD_RANGE_MIN, SPD_RANGE_MAX) / 100);
 			orderList[i] = c;
 		}
 		Arrays.sort(orderList, Comparator.comparing(Chr::getSPD).reversed());
@@ -148,8 +150,25 @@ public class Battle {
 		return orderList;
 	}
 	
+	
+	private void setActionTurn(Chr[] allList) {
+		for (Chr chr : allList) {
+			chr.actionTurn = chr.actionTurnDefault;
+			chr.DEFNext = chr.DEF_MULTI_DEFAULT;
+			chr.onceBuffSPD = chr.ONCE_BUFF_SPD_DEFAULT;
+		}
+	}
+	
+//	private void resetATKMulti(Chr chr) {
+//		if (chr.attackedFlg) {
+//			chr.ATKNext = chr.ATK_MULTI_DEFAULT;
+//			chr.attackedFlg = false;
+//		}
+//	}
+	
+	
 	private void command(Chr[] allList) {
-		boolean isBack = false;
+		boolean isBack = false;// 戻るコマンドを使用したかどうか
 		for (int i = 0; i < allList.length; i++) {
 			Chr chr = allList[i];
 			if (chr.action != null) {
@@ -178,6 +197,11 @@ public class Battle {
 		}
 	}
 	
+	private void command(Chr chr) {
+		Chr[] array = {chr};
+		command(array);
+	}
+	
 	private int execute(Chr[] orderList) {
 		for (Chr c : orderList) {
 			// 死んでたらスキップ
@@ -194,9 +218,20 @@ public class Battle {
 			}
 			
 			// action実行
-			c.action.execute();
+			while (true) {
+				c.action.execute();
+				IO.enter();// アクション毎にエンターの入力を待つ
+				c.actionTurn--;
+				
+				//resetATKMulti(c);
+				
+				if (c.actionTurn == 0) {
+					break;
+				} else {
+					command(c);
+				}
+			}
 			
-			IO.enter();
 			
 			boolean allyDestroy = ally.isZenmetsu();
 			boolean enemyDestroy = enemy.isZenmetsu();

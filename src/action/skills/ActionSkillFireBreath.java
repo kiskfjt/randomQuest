@@ -5,11 +5,11 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionSkillMawashigeri extends ActionSkill {
+public class ActionSkillFireBreath extends ActionSkill {
 
-	public ActionSkillMawashigeri(Chr me) {
+	public ActionSkillFireBreath(Chr me) {
 		super(me);
-		name = "まわしげり";
+		name = "炎の息";
 		multi = 50;
 		rangeMin = 0.8;
 		rangeMax = 1.2;
@@ -19,11 +19,11 @@ public class ActionSkillMawashigeri extends ActionSkill {
 	public boolean playerTarget() {
 		return IO.selectMultiTargets(me.party.enemy.member, me);
 	}
-	
-	// ダメージ：物理、掛け算方式
+
+	// ダメージ：魔法、掛け算方式
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
-		
-		Calc.physMultiDmg(me);
+		IO.msgln("【%sは%sを吐いた！】", me.name, name);
+
+		Calc.mgcMultiDmg(me);
 	}
 }

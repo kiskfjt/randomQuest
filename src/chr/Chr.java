@@ -9,10 +9,14 @@ import item.Item;
 import others.IO;
 
 public abstract class Chr {
-	private final int DEF_MULTI_DEFAULT = 1;
+	public final int ATK_MULTI_DEFAULT = 1;
+	public final int DEF_MULTI_DEFAULT = 1;
+	public final int ONCE_BUFF_SPD_DEFAULT = 0;
 	public static final int MAX_HP = 9999;
+	public final int MAX_SPD = 999;
 	private final int LV_DEFAULT = 1;
-	
+	private final int ACTION_TURN_DEFAULT = 1;
+	private final boolean ATTACKED_FLG_DEFAULT = false;
 	
 	public String name;
 	public int HP;
@@ -46,7 +50,11 @@ public abstract class Chr {
 	public int buffSPD;
 	
 	public int Lv;
-	public int DEFMulti;
+	public double ATKNext;
+	public double DEFNext;
+	public int actionTurn;
+	public int actionTurnDefault;
+	public int onceBuffSPD;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -58,6 +66,8 @@ public abstract class Chr {
 	public ArrayList<Equipment> equipments;
 	public Equipment equipment;
 	
+	// public boolean attackedFlg;
+	
 	
 	public final int MAX_ATK_COEF = 2;
 	public final int MAX_DEF_COEF = 2;
@@ -68,7 +78,7 @@ public abstract class Chr {
 	public final double MIN_DEF_COEF = 0.5;
 	public final double MIN_MAT_COEF = 0.5;
 	public final double MIN_MDF_COEF = 0.5;
-	public final double MIN_SPD_COEF = 0.1;
+	public final double MIN_SPD_COEF = 0.5;
 	
 	public Chr(String name, int maxHP, int maxMP, int baseATK, int baseDEF, int baseMAT, int baseMDF, int baseSPD) {
 		this.name = name;
@@ -90,7 +100,8 @@ public abstract class Chr {
 		this.minMDF = (int)(this.baseMDF * MIN_MDF_COEF);
 		this.minSPD = (int)(this.baseSPD * MIN_SPD_COEF);
 		
-		DEFMulti = DEF_MULTI_DEFAULT;
+		ATKNext = ATK_MULTI_DEFAULT;
+		DEFNext = DEF_MULTI_DEFAULT;
 		party = null;
 		actions = new ArrayList<>();
 		action = null;
@@ -101,6 +112,9 @@ public abstract class Chr {
 		equipments = new ArrayList<>();
 		equipment = null;
 		Lv = LV_DEFAULT;
+		actionTurnDefault = ACTION_TURN_DEFAULT;
+		// attackedFlg = ATTACKED_FLG_DEFAULT;
+		onceBuffSPD = ONCE_BUFF_SPD_DEFAULT;
 	}
 	
 	public Chr() {

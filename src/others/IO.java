@@ -1,6 +1,7 @@
 package others;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import action.Action;
@@ -37,49 +38,68 @@ public class IO {
 	private static String actionName;
 	private static int actionSubNum;
 	private static final String PROMPT_WAIT = "[ENTER]";
+	
+	private static final double CHECK_STATUS_UPPER_LIMIT = 0.85;
+	private static final double CHECK_STATUS_LOWER_LIMIT = 1.15;
 
 	public static void printStatus(ArrayList<Chr> member) {
 		msgln("***********************************");
-		msg("%5s", "");
+		msg("%3s", "");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%5s", member.get(i).name);
+			msg("%3s", "");
+			msg("%4s", member.get(i).name);
 		}
 		ln();
 		msg("%3s", "HP");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8d", member.get(i).HP);
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).HP, member.get(i).maxHP);
 		}
 		ln();
 		msg("%3s", "MP");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8d", member.get(i).MP);
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).MP, member.get(i).maxMP);
 		}
 		ln();
 		msg("%3s", "ATK");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8d", member.get(i).ATK);
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).ATK, member.get(i).baseATK);
 		}
 		ln();
 		msg("%3s", "DEF");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8d", member.get(i).DEF);
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).DEF, member.get(i).baseDEF);
 		}
 		ln();
-		msg("%3s", "DEF");
+		msg("%3s", "MAT");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8d", member.get(i).DEF);
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).MAT, member.get(i).baseMAT);
+		}
+		ln();
+		msg("%3s", "MDF");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%3s", "");
+			msg("%3d/%3d", member.get(i).MDF, member.get(i).baseMDF);
 		}
 		//System.out.println();
 		//System.out.printf("%3s", "SPD");
 		ln();
 		msg("%3s", "JOB");
+		msg("%3s", "");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%5s", member.get(i).jobName);
+			msg("%4s", member.get(i).jobName);
+			msg("%2s", "");
 		}
 		ln();
 		msg("%3s", "Lv");
+		msg("%5s", "");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%8s", member.get(i).Lv);
+			msg("%3s", member.get(i).Lv);
+			msg("%7s", "");
 		}
 		
 
@@ -339,7 +359,63 @@ public class IO {
 //		}
 		
 	}
+	
+	/**
+	 * ランダム単体選択メソッド
+	 * @param targetList
+	 * @param me
+	 * @return
+	 */
+	public static boolean selectSingleRandomTarget(ArrayList<Chr> targetList, Chr me) {
+		Chr targetChr = null;
+		
+		while (true) {
+			int targetNum = IO.randomNum(targetList.size() - 1);
+			targetChr = targetList.get(targetNum);
+			if (targetChr.isAlive()) {
+				me.targets.add(targetChr);
+				break;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean selectSingleDead(ArrayList<Chr> memList, Chr me) {
+		int targetNum = 0;
+		Chr targetChr = null;
+		
+		ArrayList<Chr> deadList = new ArrayList<>();
+		for (int i = 0; i < memList.size(); i++) {
+			if (memList.get(i).isDead()) {
+				deadList.add(memList.get(i));
+			}
+		}
+		
+		if (deadList.size() == 0) {
+			IO.msgln("誰も死んでいない！");
+			IO.ln();
+			return false;
+		} else {
+			msgln("ターゲットを選択");
+			
+			for (int i = 0; i < deadList.size(); i++) {
+				IO.msgln(i + ".%s", deadList.get(i).name);
+			}
+			msgln("%d.%s", deadList.size(), "戻る");
 
+			targetNum = inputNumber(deadList.size());
+
+			if (targetNum == deadList.size()) {// 入力が戻るの場合はfalseを返す
+				return false;
+			} else {
+				targetChr = deadList.get(targetNum);
+				me.targets.add(targetChr);
+				return true;
+			}
+			
+		}
+	}
+	
 	/**
 	 * 複数ターゲット選択メソッド
 	 * 生きているメンバー全員をターゲットリストに加える
@@ -387,6 +463,43 @@ public class IO {
 			}
 		}
 	}
+	
+	public static boolean checkStatus(int statusNo, ArrayList<Chr> targets) {
+		for (Chr chr : targets) {
+			if (statusNo == Action.STATUS_ATK) {
+				if (chr.ATK > chr.baseATK * chr.MAX_ATK_COEF * CHECK_STATUS_UPPER_LIMIT) {
+					return true;
+				} else if (chr.ATK < chr.baseATK * chr.MIN_ATK_COEF * CHECK_STATUS_LOWER_LIMIT) {
+					return true;
+				}
+			} else if (statusNo == Action.STATUS_DEF) {
+				if (chr.DEF > chr.baseDEF * chr.MAX_DEF_COEF * CHECK_STATUS_UPPER_LIMIT) {
+					return true;
+				} else if (chr.DEF < chr.baseDEF * chr.MIN_DEF_COEF * CHECK_STATUS_LOWER_LIMIT) {
+					return true;
+				}
+			} else if (statusNo == Action.STATUS_MAT) {
+				if (chr.MAT > chr.baseMAT * chr.MAX_MAT_COEF * CHECK_STATUS_UPPER_LIMIT) {
+					return true;
+				} else if (chr.MAT < chr.baseMAT * chr.MIN_MAT_COEF * CHECK_STATUS_LOWER_LIMIT) {
+					return true;
+				}
+			} else if (statusNo == Action.STATUS_MDF) {
+				if (chr.MDF > chr.baseMDF * chr.MAX_MDF_COEF * CHECK_STATUS_UPPER_LIMIT) {
+					return true;
+				} else if (chr.MDF < chr.baseMDF * chr.MIN_MDF_COEF * CHECK_STATUS_LOWER_LIMIT) {
+					return true;
+				}
+			} else if (statusNo == Action.STATUS_SPD) {
+				if (chr.SPD > chr.baseSPD * chr.MAX_SPD_COEF * CHECK_STATUS_UPPER_LIMIT) {
+					return true;
+				} else if (chr.SPD < chr.baseSPD * chr.MIN_SPD_COEF * CHECK_STATUS_LOWER_LIMIT) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * ランダム整数生成メソッド
@@ -410,7 +523,68 @@ public class IO {
 		int range = max + 1;
 		return (int) (Math.random() * range);
 	}
-
+	
+//	public static double randomNum(double min, double max) {
+//		BigDecimal bdMin = BigDecimal.valueOf(min);
+//		BigDecimal bdMax = BigDecimal.valueOf(max);
+//		
+//		int minDigits = bdMin.precision();
+//		int maxDigits = bdMax.precision();
+//		int minDecimal = bdMin.scale();
+//		int maxDecimal = bdMax.scale();
+//		int maxVal = 0;
+//		
+//		if (minDecimal >= maxDecimal) {
+//			maxVal = minDecimal;
+//		} else {
+//			maxVal = maxDecimal;
+//		}
+//		
+//		int tempMin = (int) (min * Math.pow(10, maxVal));
+//		int tempMax = (int) (max * Math.pow(10, maxVal));
+//		
+//		randomNum(tempMin, tempMax);
+//		
+//		return min + (int) (Math.random() * range);
+//	}
+	/**
+	 * ランダム小数生成メソッド
+	 * minからmaxまでのランダムな小数を返す
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static double randomNum(double min, double max) {
+		double range = max - min;
+		Random random = new Random();
+		return min + random.nextDouble() * range;
+	}
+	
+	/**
+	 * ランダム小数生成メソッド
+	 * 0からmaxまでのランダムな小数を返す
+	 * @param max
+	 * @return
+	 */
+	public static double randomNum(double max) {
+		return randomNum(0, max);
+	}
+	
+	/**
+	 * 確率判定メソッド
+	 * p%の確率でtrueを返す
+	 * @param p
+	 * @return
+	 */
+	public static boolean probability(int p) {
+		int random = randomNum(1, 100);
+		if (random <= p) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * メッセージを出力するメソッド。
 	 * 最後に改行を出力する。
@@ -448,6 +622,9 @@ public class IO {
 		me.items.remove(item);
 	}
 	
+	/**
+	 * エンター入力を待つメソッド
+	 */
 	public static void enter() {
 		msg(PROMPT_WAIT);
 		sc.nextLine();
