@@ -52,7 +52,7 @@ public class Battle {
 	//final int SIPPUUDUKI;
 	
 	public int start() {
-		System.out.println("まおうおそざわがあらわれた！");
+		System.out.println("【まおうおそざわがあらわれた！】");
 		
 		for (turn = 1;; turn++) {
 			// ステータス表示
@@ -72,7 +72,7 @@ public class Battle {
 			Chr[] orderList = makeOrder(allList);// 行動実行時はこちらを使う
 			
 			// 行動実行
-			int result = execute(orderList);
+			int result = execute(orderList, allList);
 			
 			
 			// ゲーム継続判定
@@ -120,8 +120,8 @@ public class Battle {
 	}
 	
 	// SPD決定に使う乱数(±X%）
-	private final int SPD_RANGE_MIN = 50;
-	private final int SPD_RANGE_MAX = 150;
+	private final double SPD_RANGE_MIN = 0.5;
+	private final double SPD_RANGE_MAX = 1.5;
 	
 	private Chr[] addList(ArrayList<Chr> ally, ArrayList<Chr> enemy) {
 		// 味方敵含めたリストの作成
@@ -142,7 +142,7 @@ public class Battle {
 		Chr[] orderList = new Chr[allList.length];
 		for (int i = 0; i < allList.length; i++) {
 			Chr c = allList[i];
-			c.SPD = c.buffSPD + c.onceBuffSPD + (int) (c.baseSPD * IO.randomNum(SPD_RANGE_MIN, SPD_RANGE_MAX) / 100);
+			c.SPD = c.buffSPD + c.SPDNext + (int) (c.baseSPD * IO.randomNum(SPD_RANGE_MIN, SPD_RANGE_MAX));
 			orderList[i] = c;
 		}
 		Arrays.sort(orderList, Comparator.comparing(Chr::getSPD).reversed());
@@ -155,7 +155,7 @@ public class Battle {
 		for (Chr chr : allList) {
 			chr.actionTurn = chr.actionTurnDefault;
 			chr.DEFNext = chr.DEF_MULTI_DEFAULT;
-			chr.onceBuffSPD = chr.ONCE_BUFF_SPD_DEFAULT;
+			chr.SPDNext = chr.SPD_NEXT_DEFAULT;
 		}
 	}
 	
@@ -202,10 +202,19 @@ public class Battle {
 		command(array);
 	}
 	
-	private int execute(Chr[] orderList) {
+	private int execute(Chr[] orderList, Chr[] allList) {
 		for (Chr c : orderList) {
 			// 死んでたらスキップ
 			if (c.isDead())
+				continue;
+			// 行動前状態異常の影響実行
+			if (c.status != 0) {
+				if(IO.doStatusEffectBeforeAction(c, allList)) {
+					continue;
+				}
+			}
+			// 蘇生されたばかりの場合もスキップ
+			if (c.action == null)
 				continue;
 			
 			// MPチェック　MPが足りなければスキップ
@@ -228,10 +237,20 @@ public class Battle {
 				if (c.actionTurn == 0) {
 					break;
 				} else {
-					command(c);
+					boolean allyDestroy = ally.isZenmetsu();
+					boolean enemyDestroy = enemy.isZenmetsu();
+					if (allyDestroy || enemyDestroy) {
+						break;
+					} else {
+						command(c);
+					}
 				}
 			}
 			
+			// 行動後状態異常の影響実行
+			if (c.status != 0) {
+				IO.doStatusEffectAfterAction(c);
+			}
 			
 			boolean allyDestroy = ally.isZenmetsu();
 			boolean enemyDestroy = enemy.isZenmetsu();
@@ -243,6 +262,12 @@ public class Battle {
 				return RESULT_ENEMY_DESTROY;
 			}
 		}
+		
+		// 全員の行動が終わった後に状態異常の継続ターン数が0の場合、状態異常を解除する
+		for (Chr c : orderList) {
+			IO.recoverFromAbnormalStatus(c);
+		}
+		
 		return RESULT_NOTYET;
 	}
 	

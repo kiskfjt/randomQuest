@@ -20,7 +20,7 @@ public class ActionMagicRevive extends ActionMagic {
 	
 	// 対象：味方単体
 	public boolean playerTarget() {
-		return IO.selectSingleDead(me.party.member, me);
+		return IO.selectSingleTarget(me.party.member, me);
 	}
 
 	// 蘇生時のHP40～60%
@@ -29,7 +29,7 @@ public class ActionMagicRevive extends ActionMagic {
 
 		Calc.revive(me, rangeMin, rangeMax, probability);
 		
-		me.MP -= MPCons;
+		Calc.subtractMPConsIfTargetIsDead(me, MPCons);
 	}
 
 }

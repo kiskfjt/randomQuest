@@ -61,7 +61,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 		int actionNum = 0;
 		while (true) {
 			actionNum = ((BossMortamor2nd)me).BrotNo * 2 + IO.randomNum(1);
-			if (actionNum == A_BREAK_SHIELD && IO.checkStatus(STATUS_DEF, me.party.enemy.member)) {
+			if (actionNum == A_BREAK_SHIELD && IO.checkBuff(STATUS_DEF, me.party.enemy.member)) {
 				continue;
 			} else {
 				break;
@@ -84,6 +84,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 	}
 	
 	public boolean shippuTarget() {
+		
 		return IO.selectSingleRandomTarget(me.party.enemy.member, me);
 	}
 	

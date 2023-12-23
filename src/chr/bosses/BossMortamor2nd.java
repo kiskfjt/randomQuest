@@ -24,6 +24,8 @@ public class BossMortamor2nd extends Chr {
 	private final int A_FIREBREATH = 4;
 	private final int A_TO_AROT = 5;
 	
+	private final int A_TURN_DEFAULT = 2;
+	
 	public int BrotNo;
 	
 	public BossMortamor2nd() {
@@ -43,7 +45,7 @@ public class BossMortamor2nd extends Chr {
 		actions.add(new ActionSkillHardDefense(this));
 		actions.add(new ActionFunctionToBrot(this));
 		
-		this.actionTurnDefault = 2;
+		this.actionTurnDefault = A_TURN_DEFAULT;
 		
 		setToNPC();
 	}
@@ -65,7 +67,7 @@ public class BossMortamor2nd extends Chr {
 		if (actions.get(0) instanceof ActionBasicAttack) {
 			while (true) {
 				actionNum = IO.randomNum(A_TO_BROT);
-				if (actionNum == A_PROTECTION && IO.checkStatus(Action.STATUS_DEF, this.party.member)) {
+				if (actionNum == A_PROTECTION && IO.checkBuff(Action.STATUS_DEF, this.party.member)) {
 					continue;
 				} else if (actionNum == A_HARD_DEFENSE && this.DEFNext != this.DEF_MULTI_DEFAULT) {
 					continue;
@@ -77,7 +79,7 @@ public class BossMortamor2nd extends Chr {
 		} else {
 			while (true) {
 				actionNum = this.BrotNo * 2 + IO.randomNum(1);
-				if (actionNum == A_BREAK_SHIELD && IO.checkStatus(Action.STATUS_DEF, this.party.enemy.member)) {
+				if (actionNum == A_BREAK_SHIELD && IO.checkBuff(Action.STATUS_DEF, this.party.enemy.member)) {
 					continue;
 				} else {
 					break;
@@ -133,6 +135,7 @@ public class BossMortamor2nd extends Chr {
 	}
 	
 	public boolean shippuTarget() {
+		this.SPDNext = this.MAX_SPD;
 		return IO.selectSingleRandomTarget(this.party.enemy.member, this);
 	}
 	

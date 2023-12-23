@@ -15,6 +15,8 @@ import chr.Chr;
 import chr.Party;
 import equipment.Equipment;
 import item.Item;
+import item.ItemMushroom;
+import item.ItemStone;
 
 public class IO {
 	private static Scanner sc = new Scanner(System.in);
@@ -41,6 +43,15 @@ public class IO {
 	
 	private static final double CHECK_STATUS_UPPER_LIMIT = 0.85;
 	private static final double CHECK_STATUS_LOWER_LIMIT = 1.15;
+	
+	// ステータス異常関連の定数
+	private static final int STATUS_TURN_MIN = 3;
+	private static final int STATUS_TURN_MAX = 5;
+	private static final int ACTION_CANCEL_PROBABILITY = 80;
+	private static final double POISONED_DAMAGE_MIN = 0.04;
+	private static final double POISONED_DAMAGE_MAX = 0.06;
+	private static final double DEADLY_POISONED_DAMAGE_MIN = 0.14;
+	private static final double DEADLY_POISONED_DAMAGE_MAX = 0.16;
 
 	public static void printStatus(ArrayList<Chr> member) {
 		msgln("***********************************");
@@ -98,10 +109,14 @@ public class IO {
 		msg("%3s", "Lv");
 		msg("%5s", "");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%3s", member.get(i).Lv);
-			msg("%7s", "");
+			if (member.get(i).status == 0) {
+				msg("%3s", member.get(i).Lv);
+				msg("%7s", "");
+			} else {
+				msg("%3s", member.get(i).status);
+				msg("%7s", "");
+			}
 		}
-		
 
 		System.out.println();
 		System.out.println("***********************************");
@@ -319,11 +334,11 @@ public class IO {
 	}
 
 	/**
-	 * 単体ターゲット選択メソッド
+	 * 単体生存ターゲット選択メソッド
 	 * @param memList
 	 * @return
 	 */
-	public static boolean selectSingleTarget(ArrayList<Chr> memList, Chr me) {
+	public static boolean selectSingleAliveTarget(ArrayList<Chr> memList, Chr me) {
 		int targetNum = 0;
 		Chr targetChr = null;
 
@@ -337,7 +352,7 @@ public class IO {
 		}
 
 		for (int i = 0; i < aliveList.size(); i++) {
-			IO.msgln(i + ".%s", aliveList.get(i).name);
+			msgln(i + ".%s", aliveList.get(i).name);
 		}
 		msgln("%d.%s", aliveList.size(), "戻る");
 
@@ -357,7 +372,40 @@ public class IO {
 //			msgln("%sはすでにしんでいる！", targetChr.name);
 //			continue;
 //		}
-		
+	}
+	
+	/**
+	 * 単体ターゲット選択メソッド
+	 * 対象が死んでいてもターゲットに加える
+	 * @param memList
+	 * @param me
+	 * @return
+	 */
+	public static boolean selectSingleTarget(ArrayList<Chr> memList, Chr me) {
+		int targetNum = 0;
+		Chr targetChr = null;
+
+		msgln("ターゲットを選択");
+
+		ArrayList<Chr> targetList = new ArrayList<>();
+		for (Chr chr : memList) {
+			targetList.add(chr);
+		}
+
+		for (int i = 0; i < targetList.size(); i++) {
+			msgln(i + ".%s", targetList.get(i).name);
+		}
+		msgln("%d.%s", targetList.size(), "戻る");
+
+		targetNum = inputNumber(targetList.size());
+
+		if (targetNum == targetList.size()) {// 入力が戻るの場合はfalseを返す
+			return false;
+		} else {
+			targetChr = targetList.get(targetNum);
+			me.targets.add(targetChr);
+			return true;
+		}
 	}
 	
 	/**
@@ -370,12 +418,20 @@ public class IO {
 		Chr targetChr = null;
 		
 		while (true) {
-			int targetNum = IO.randomNum(targetList.size() - 1);
+			int targetNum = randomNum(targetList.size() - 1);
 			targetChr = targetList.get(targetNum);
 			if (targetChr.isAlive()) {
 				me.targets.add(targetChr);
 				break;
 			}
+		}
+		return true;
+	}
+	
+	
+	public static boolean selectMultiRandomTargets(ArrayList<Chr> targetList, Chr me, int numOfTimes) {
+		for (int i = 0; i < numOfTimes; i++) {
+			selectSingleRandomTarget(targetList, me);
 		}
 		return true;
 	}
@@ -392,14 +448,14 @@ public class IO {
 		}
 		
 		if (deadList.size() == 0) {
-			IO.msgln("誰も死んでいない！");
-			IO.ln();
+			msgln("誰も死んでいない！");
+			ln();
 			return false;
 		} else {
 			msgln("ターゲットを選択");
 			
 			for (int i = 0; i < deadList.size(); i++) {
-				IO.msgln(i + ".%s", deadList.get(i).name);
+				msgln(i + ".%s", deadList.get(i).name);
 			}
 			msgln("%d.%s", deadList.size(), "戻る");
 
@@ -456,6 +512,7 @@ public class IO {
 	public static void judgeHP(Chr attacker, Chr defender) {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
+			defender.status = defender.STATUS_NOMAL;
 			if (attacker.party.pKind == Party.PARTY_KIND_ALLY) {
 				System.out.println(defender.name + "をたおした！");
 			} else {
@@ -464,7 +521,7 @@ public class IO {
 		}
 	}
 	
-	public static boolean checkStatus(int statusNo, ArrayList<Chr> targets) {
+	public static boolean checkBuff(int statusNo, ArrayList<Chr> targets) {
 		for (Chr chr : targets) {
 			if (statusNo == Action.STATUS_ATK) {
 				if (chr.ATK > chr.baseATK * chr.MAX_ATK_COEF * CHECK_STATUS_UPPER_LIMIT) {
@@ -500,7 +557,181 @@ public class IO {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * 状態異常になったときにメッセージを表示し、状態異常の継続ターンをセットする
+	 * @param me
+	 */
+	public static void setStatus(Chr me) {
+		if (me.status == me.STATUS_POISONED) {
+			msgln("%sは毒におかされた！", me.name);
+		} else if (me.status == me.STATUS_DEADLY_POISONED) {
+			msgln("%sは猛毒におかされた！", me.name);
+		} else if (me.status == me.STATUS_PARALYZED) {
+			msgln("%sは体がまひした！", me.name);
+		} else if (me.status == me.STATUS_ASLEEP) {
+			msgln("%sは眠ってしまった！", me.name);
+		} else if (me.status == me.STATUS_CONFUSED) {
+			msgln("%sは頭が混乱した！", me.name);
+		} else if (me.status == me.STATUS_SILENT) {
+			msgln("%sは沈黙状態になった！", me.name);
+		}
+		
+		if (me.status != me.STATUS_NOMAL) {
+			me.statusTurn = randomNum(STATUS_TURN_MIN, STATUS_TURN_MAX);
+		}
+	}
+	
+	/**
+	 * 行動する前にステータス異常の影響を実行するメソッド
+	 * 行動できない場合はtrueを返す
+	 * @param me
+	 * @param allList
+	 * @return
+	 */
+	public static boolean doStatusEffectBeforeAction(Chr me, Chr[] allList) {
+		boolean cantMove = false;
+		ArrayList<Chr> list = new ArrayList<>();
+		for (Chr chr : allList) {
+			list.add(chr);
+		}
+		
+		if (me.status == me.STATUS_PARALYZED) {
+			if (probability(ACTION_CANCEL_PROBABILITY)) {
+				cantMove = true;
+				msgln("%sは体がまひして動けない！", me.name);
+			}
+			me.statusTurn--;
+		} else if (me.status == me.STATUS_ASLEEP) {
+			cantMove = true;
+			msgln("%sは眠っている！", me.name);
+			me.statusTurn--;
+		} else if (me.status == me.STATUS_CONFUSED) {
+			if (probability(ACTION_CANCEL_PROBABILITY)) {
+				msgln("%sはこんらんしている！", me.name);
+				me.targets.clear();
+				me.action = null;
+				selectSingleRandomTarget(list, me);
+				int actionNum = randomNum(4);
+				switch (actionNum) {
+				case 0:
+					me.action = new ActionBasicAttack(me);
+					break;
+				case 1:
+					me.item = new ItemStone(me);
+					me.action = new ActionItem(me);
+				case 2:
+					cantMove = true;
+					msgln("%sは逃げ出した！", me.name);
+					msgln("しかし、回り込まれてしまった！");
+				case 3:
+					me.targets.clear();
+					me.targets.add(me);
+					me.item = new ItemMushroom(me);
+					me.action = new ActionItem(me);
+					msgln("%sはそこらへんに生えているきのこを食べ始めた！");
+				case 4:
+					cantMove = true;
+					msgln("%sはおびえている！", me.name);
+				}
+			}
+			me.statusTurn--;
+		} else if (me.status == me.STATUS_SILENT) {
+			if (me.action instanceof ActionMagic) {
+				cantMove = true;
+				msgln("%sはじゅもんが使えない！", me.name);
+			}
+			me.statusTurn--;
+		}
+		return cantMove;
+	}
+	
+	/**
+	 * 行動後に発生する状態異常の影響を実行するメソッド
+	 * @param me
+	 */
+	public static void doStatusEffectAfterAction(Chr me) {
+		if (me.status == me.STATUS_POISONED) {
+			int dmg =  (int) (me.maxHP * IO.randomNum(POISONED_DAMAGE_MIN, POISONED_DAMAGE_MAX));
+			me.HP -= dmg;
+			msgln("%sは%dの毒ダメージを受けた！", me.name, dmg);
+			judgeHP(me.party.enemy.member.get(0), me);
+			me.statusTurn--;
+		} else if (me.status == me.STATUS_DEADLY_POISONED) {
+			int dmg =  (int) (me.maxHP * IO.randomNum(DEADLY_POISONED_DAMAGE_MIN, DEADLY_POISONED_DAMAGE_MAX));
+			me.HP -= dmg;
+			msgln("%sは%dの猛毒のダメージを受けた！", me.name, dmg);
+			judgeHP(me.party.enemy.member.get(0), me);
+			me.statusTurn--;
+		}
+	}
+	
+	/**
+	 * 状態異常の状態かつ状態異常のターン数が0の場合、正常な状態に戻す
+	 * @param me
+	 */
+	public static void recoverFromAbnormalStatus(Chr me) {
+		if (me.status != 0 && me.statusTurn == 0) {
+			if (me.status == me.STATUS_POISONED) {
+				msgln("%sの体から毒が消えた！", me.name);
+			} else if (me.status == me.STATUS_DEADLY_POISONED) {
+				msgln("%sの体から猛毒が消えた！", me.name);
+			} else if (me.status == me.STATUS_PARALYZED) {
+				msgln("%sの体のしびれがとれた！", me.name);
+			} else if (me.status == me.STATUS_ASLEEP) {
+				msgln("%sは目を覚ました！", me.name);
+			} else if (me.status == me.STATUS_CONFUSED) {
+				msgln("%sは正気に戻った！", me.name);
+			} else if (me.status == me.STATUS_SILENT) {
+				msgln("%sは喋れるようになった！", me.name);
+			}
+			me.status = me.STATUS_NOMAL;
+		}
+	}
+	
+	/**
+	 * 攻撃を受けた時に生きていればステータスを正常に戻す
+	 * @param me
+	 */
+	public static void recoverFromAsleep(Chr target) {
+		if (target.isAlive() && target.status == target.STATUS_ASLEEP) {
+			target.status = target.STATUS_NOMAL;
+			msgln("%sは目を覚ました！", target.name);
+		}
+	}
+	
+	/**
+	 * me.targetsから生きているターゲットがいるか判定するメソッド
+	 * 1人でも生きていればtrueを返す
+	 * @param me
+	 * @return
+	 */
+	public static boolean isTargetAlive(Chr me) {
+		boolean isTargetAlive = false;
+		for (Chr chr : me.targets) {
+			if (chr.isAlive()) {
+				isTargetAlive = true;
+			}
+		}
+		return isTargetAlive;
+	}
+	
+	/**
+	 * me.targetsから死んでいるターゲットがいるか判定するメソッド
+	 * 1人でも死んでいればtrueを返す
+	 * @param me
+	 * @return
+	 */
+	public static boolean isTargetDead(Chr me) {
+		boolean isTargetDead = false;
+		for (Chr chr : me.targets) {
+			if (chr.isAlive()) {
+				isTargetDead = true;
+			}
+		}
+		return isTargetDead;
+	}
+	
 	/**
 	 * ランダム整数生成メソッド
 	 * minからmaxまでのランダムな整数を返す

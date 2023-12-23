@@ -5,23 +5,21 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionSkillShippu extends ActionSkill {
+public class ActionSkillSeikenzuki extends ActionSkill {
 
-	public ActionSkillShippu(Chr me) {
+	public ActionSkillSeikenzuki(Chr me) {
 		super(me);
-		name = "しっぷう突き";
-		multi = 40;
-		rangeMin = 0.8;
-		rangeMax = 1.2;
+		name = "せいけんづき";
+		multi = 100;
+		missRate = 20;
 	}
 	
 	// 攻撃範囲：敵単体
 	public boolean playerTarget() {
-		me.SPDNext = me.MAX_SPD;
 		return IO.selectSingleTarget(me.party.enemy.member, me);
 	}
-
-	// ダメージ：物理、掛け算方式
+	
+	// ダメージ：物理、掛け算方式、命中率80%
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 

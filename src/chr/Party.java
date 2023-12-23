@@ -3,6 +3,7 @@ package chr;
 import java.util.ArrayList;
 
 import chr.jobs.BraveChr;
+import chr.jobs.FighterChr;
 import chr.jobs.PriestChr;
 import equipment.Equipment;
 import equipment.EquipmentFireClaw;
@@ -10,8 +11,17 @@ import equipment.EquipmentGoldBracelet;
 import equipment.EquipmentLeatherHat;
 import equipment.EquipmentLidOfPod;
 import equipment.EquipmentNomalClothes;
+import item.ItemElixir;
+import item.ItemGreaterHealingPotion;
+import item.ItemGreaterMagicPotion;
+import item.ItemHealingPotion;
+import item.ItemMagicPotion;
+import item.ItemMaximApple;
+import item.ItemMaximTomato;
 import item.ItemMedHerb;
 import item.ItemPhoenixTail;
+import item.ItemPrayerRing;
+import item.ItemStone;
 import others.IO;
 
 public class Party {
@@ -43,16 +53,15 @@ public class Party {
 			// どうぐをランダム選択する
 			selectItem(chr);
 			
-			if (partyKind == PARTY_KIND_ALLY) {
-				chr.setToPC();
-				pKind = PARTY_KIND_ALLY;
-			} else {
-				pKind = PARTY_KIND_ENEMY;
-			}
-			
 			member.add(chr);
 			chr.party = this;
 			
+			if (partyKind == PARTY_KIND_ALLY) {
+				chr.setToPC();
+				chr.party.pKind = PARTY_KIND_ALLY;
+			} else {
+				chr.party.pKind = PARTY_KIND_ENEMY;
+			}
 			
 			//System.out.println(member.get(i).name);
 			//System.out.println(battle.party.member.get(i).ATK);
@@ -68,6 +77,13 @@ public class Party {
 			
 			member.add(chr);
 			chr.party = this;
+			
+			if (partyKind == PARTY_KIND_ALLY) {
+				chr.setToPC();
+				chr.party.pKind = PARTY_KIND_ALLY;
+			} else {
+				chr.party.pKind = PARTY_KIND_ENEMY;
+			}
 		}
 	}
 	
@@ -82,7 +98,8 @@ public class Party {
 	
 	private Chr selectJob(String name) {
 		Chr chr = null;
-		int jobNo = IO.randomNum(1);// ジョブ数-1を記入
+		int sumOfJobs = 3;
+		int jobNo = IO.randomNum(sumOfJobs - 1);// ジョブ数-1を記入
 		switch (jobNo) {
 		case 0:
 			chr = new BraveChr(name);
@@ -90,13 +107,16 @@ public class Party {
 		case 1:
 			chr = new PriestChr(name);
 			break;
+		case 2:
+			chr = new FighterChr(name);
+			break;
 		}
 		return chr;
 	}
 	
 	private void selectItem(Chr chr) {
 		for (int i = 0; i < MAX_ITEM_NUMBER; i++) {
-			int sumOfItems = 2;
+			int sumOfItems = 11;
 			int itemNo = IO.randomNum(sumOfItems - 1);
 			
 			switch (itemNo) {
@@ -105,6 +125,33 @@ public class Party {
 				break;
 			case 1:
 				chr.items.add(new ItemPhoenixTail(chr));
+				break;
+			case 2:
+				chr.items.add(new ItemStone(chr));
+				break;
+			case 3:
+				chr.items.add(new ItemHealingPotion(chr));
+				break;
+			case 4:
+				chr.items.add(new ItemGreaterHealingPotion(chr));
+				break;
+			case 5:
+				chr.items.add(new ItemMaximTomato(chr));
+				break;
+			case 6:
+				chr.items.add(new ItemMagicPotion(chr));
+				break;
+			case 7:
+				chr.items.add(new ItemGreaterMagicPotion(chr));
+				break;
+			case 8:
+				chr.items.add(new ItemMaximApple(chr));
+				break;
+			case 9:
+				chr.items.add(new ItemElixir(chr));
+				break;
+			case 10:
+				chr.items.add(new ItemPrayerRing(chr));
 				break;
 			}
 		}

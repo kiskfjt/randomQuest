@@ -25,9 +25,9 @@ public class ItemPhoenixTail extends Item {
 
 		Calc.revive(me, rangeMin, rangeMax, probability);
 		
-		// このインスタンスをitemリストから削除
-	    IO.removeFromItemList(me, this);
-		
+		// 対象が死んでいたらこのインスタンスをitemリストから削除
+		if (IO.isTargetDead(me)) {
+			IO.removeFromItemList(me, this);
+		}
 	}
-	
 }

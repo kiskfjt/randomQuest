@@ -17,7 +17,7 @@ public class ActionBasicAttack extends ActionBasic {
 	}
 	
 	public boolean playerTarget() {
-		return IO.selectSingleTarget(me.party.enemy.member, me);
+		return IO.selectSingleAliveTarget(me.party.enemy.member, me);
 	}
 	
 	public void execute() {

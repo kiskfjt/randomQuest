@@ -26,6 +26,6 @@ public class ActionMagicHeal extends ActionMagic {
 		
 		Calc.singleHeal(me, this);
 		
-		me.MP -= MPCons;
+		Calc.subtractMPConsIfTargetIsAlive(me, MPCons);
 	}
 }

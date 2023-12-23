@@ -4,26 +4,27 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ItemMedHerb extends Item {
-	public ItemMedHerb(Chr me) {
+public class ItemGreaterHealingPotion extends Item {
+
+	public ItemGreaterHealingPotion(Chr me) {
 		super(me);
-		name = "やくそう";
-		rangeMin = 30;
-		rangeMax = 50;
+		name = "上級回復ポーション";
+		rangeMin = 100;
+		rangeMax = 120;
 	}
 
 	/**
-	 *  回復対象：味方単体
+	 * 回復対象：味方単体
 	 */
 	public boolean playerTarget() {
 		return IO.selectSingleTarget(me.party.member, me);
 	}
 
 	/**
-	 * 回復：30～50の範囲、ヒールより少し劣る
+	 * 回復：100～120の範囲、回復ポーションより多く回復
 	 */
 	public void execute() {
-		IO.msgln("【%sは%sをつかった！】", me.name, name);
+		IO.msgln("【%sは%sに%sをつかった！】", me.name, me.targets.get(0), name);
 
 		Calc.singleHeal(me, this);
 
@@ -32,4 +33,5 @@ public class ItemMedHerb extends Item {
 			IO.removeFromItemList(me, this);
 		}
 	}
+
 }

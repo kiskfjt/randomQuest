@@ -12,7 +12,7 @@ public class ActionMagicProtection extends ActionMagic {
 		name = "プロテクション";
 		MPCons = 10;
 		buffNo = BUFF_DEF;
-		buffValue = 50;
+		buffValue = 0.35;
 	}
 	
 	// バフ対象：味方単体
@@ -20,7 +20,7 @@ public class ActionMagicProtection extends ActionMagic {
 		return IO.selectSingleTarget(me.party.member, me);
 	}
 	
-	// 防御バフ：baseDEFの85%アップ
+	// 防御バフ：baseDEFの35%アップ
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 		

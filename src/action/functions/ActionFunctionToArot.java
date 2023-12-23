@@ -59,7 +59,7 @@ public class ActionFunctionToArot extends ActionFunction {
 		int actionNum = 0;
 		while (true) {
 			actionNum = IO.randomNum(A_TO_BROT);
-			if (actionNum == A_PROTECTION && IO.checkStatus(Action.STATUS_DEF, me.party.member)) {
+			if (actionNum == A_PROTECTION && IO.checkBuff(Action.STATUS_DEF, me.party.member)) {
 				continue;
 			} else if (actionNum == A_HARD_DEFENSE && me.DEFNext != Action.DEF_NEXT_DEFAULT_VALUE) {
 				continue;

@@ -20,7 +20,7 @@ public class ActionSkillKiaitame extends ActionSkill {
 	// 次回の物理攻撃のダメージが2倍になる
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
-		IO.msgln("%sは次の攻撃に備えている！", me.name);
+		IO.msgln("%sはちからをためている！", me.name);
 		
 		me.ATKNext = ATKNext;
 	}

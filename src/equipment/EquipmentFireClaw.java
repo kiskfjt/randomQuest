@@ -8,21 +8,22 @@ public class EquipmentFireClaw extends Equipment {
 	public EquipmentFireClaw(Chr me) {
 		super(me);
 		name = "炎の爪";
-		multi = 120;
 		ATK = 30;
 		addStatus();
+		rangeMin = 30;
+		rangeMax = 50;
 	}
 	
 	// 攻撃対象：敵単体
 	public boolean playerTarget() {
-		return IO.selectSingleTarget(me.party.enemy.member, me);
+		return IO.selectSingleAliveTarget(me.party.enemy.member, me);
 	}
 	
 	// 
 	public void execute() {
 		IO.msgln("【%sは%sをふりかざした！】", me.name, name);
 		
-		Calc.mgcSingleDmg(me);
+		Calc.ignoreDefenseDmg(me, rangeMin, rangeMax);
 	}
 
 }

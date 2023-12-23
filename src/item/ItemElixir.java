@@ -4,32 +4,32 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ItemMedHerb extends Item {
-	public ItemMedHerb(Chr me) {
+public class ItemElixir extends Item {
+
+	public ItemElixir(Chr me) {
 		super(me);
-		name = "やくそう";
-		rangeMin = 30;
-		rangeMax = 50;
+		name = "エリクサー";
 	}
 
 	/**
-	 *  回復対象：味方単体
+	 * 回復対象：味方単体
 	 */
 	public boolean playerTarget() {
 		return IO.selectSingleTarget(me.party.member, me);
 	}
 
 	/**
-	 * 回復：30～50の範囲、ヒールより少し劣る
+	 * HP&MP全回復
 	 */
 	public void execute() {
 		IO.msgln("【%sは%sをつかった！】", me.name, name);
-
-		Calc.singleHeal(me, this);
-
+		
+		Calc.maxSingleHPAndMPRecover(me);
+		
 		// 対象が生きていたらこのインスタンスをitemリストから削除
 		if (IO.isTargetAlive(me)) {
 			IO.removeFromItemList(me, this);
 		}
 	}
+	
 }

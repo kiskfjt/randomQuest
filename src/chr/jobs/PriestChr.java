@@ -8,6 +8,8 @@ import action.ActionEquipment;
 import action.ActionItem;
 import action.ActionMagic;
 import action.magics.ActionMagicHeal;
+import action.magics.ActionMagicProtectAll;
+import action.magics.ActionMagicProtection;
 import action.magics.ActionMagicRevive;
 import chr.Chr;
 import others.IO;
@@ -30,6 +32,8 @@ public class PriestChr extends Chr {
 		actions.add(new ActionMagicRevive(this));
 		actions.add(new ActionItem(this));
 		actions.add(new ActionEquipment(this));
+		actions.add(new ActionMagicProtection(this));
+		actions.add(new ActionMagicProtectAll(this));
 		
 		setToNPC();
 	}

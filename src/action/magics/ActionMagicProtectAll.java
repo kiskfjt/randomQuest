@@ -5,27 +5,28 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionMagicBreakShield extends ActionMagic {
+public class ActionMagicProtectAll extends ActionMagic {
 
-	public ActionMagicBreakShield(Chr me) {
+	public ActionMagicProtectAll(Chr me) {
 		super(me);
-		name = "ブレイクシールド";
-		MPCons = 10;
+		name = "プロテクトオール";
+		MPCons = 20;
 		buffNo = BUFF_DEF;
-		buffValue = -25;
+		buffValue = 0.25;
 	}
 	
-	// デバフ対象：敵全体
+	// バフ対象：味方全体
 	public boolean playerTarget() {
-		return IO.selectSingleAliveTarget(me.party.member, me);
+		return IO.selectMultiTargets(me.party.member, me);
 	}
 
-	// 防御デバフ：baseDEFの50%ダウン
+	// 防御バフ：baseDEFの25%アップ
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
-
+		
 		Calc.multiBuff(me, buffNo, buffValue);
 		
 		me.MP -= MPCons;
 	}
+
 }

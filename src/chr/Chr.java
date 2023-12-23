@@ -11,12 +11,24 @@ import others.IO;
 public abstract class Chr {
 	public final int ATK_MULTI_DEFAULT = 1;
 	public final int DEF_MULTI_DEFAULT = 1;
-	public final int ONCE_BUFF_SPD_DEFAULT = 0;
+	public final int SPD_NEXT_DEFAULT = 0;
 	public static final int MAX_HP = 9999;
 	public final int MAX_SPD = 999;
 	private final int LV_DEFAULT = 1;
 	private final int ACTION_TURN_DEFAULT = 1;
-	private final boolean ATTACKED_FLG_DEFAULT = false;
+	// private final boolean ATTACKED_FLG_DEFAULT = false;
+	public static final int STATUS_TURN_DEFAULT = 0;
+	
+	// 状態異常の定数
+	public final int STATUS_NOMAL = 0;
+	public final int STATUS_POISONED = 1;
+	public final int STATUS_DEADLY_POISONED = 2;
+	public final int STATUS_PARALYZED = 3;
+	public final int STATUS_ASLEEP = 4;
+	public final int STATUS_CONFUSED = 5;
+	public final int STATUS_SILENT = 6;
+	
+	
 	
 	public String name;
 	public int HP;
@@ -54,7 +66,9 @@ public abstract class Chr {
 	public double DEFNext;
 	public int actionTurn;
 	public int actionTurnDefault;
-	public int onceBuffSPD;
+	public int SPDNext;
+	public int status;
+	public int statusTurn;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -114,7 +128,9 @@ public abstract class Chr {
 		Lv = LV_DEFAULT;
 		actionTurnDefault = ACTION_TURN_DEFAULT;
 		// attackedFlg = ATTACKED_FLG_DEFAULT;
-		onceBuffSPD = ONCE_BUFF_SPD_DEFAULT;
+		SPDNext = SPD_NEXT_DEFAULT;
+		status = STATUS_NOMAL;
+		statusTurn = STATUS_TURN_DEFAULT;
 	}
 	
 	public Chr() {
