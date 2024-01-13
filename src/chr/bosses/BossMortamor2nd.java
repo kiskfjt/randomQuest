@@ -131,7 +131,7 @@ public class BossMortamor2nd extends Chr {
 	}
 	
 	public boolean breakShieldTarget() {
-		return IO.selectMultiTargets(this.party.enemy.member, this);
+		return IO.selectAllTargets(this.party.enemy.member, this);
 	}
 	
 	public boolean shippuTarget() {
@@ -140,11 +140,11 @@ public class BossMortamor2nd extends Chr {
 	}
 	
 	public boolean mawashigeriTarget() {
-		return IO.selectMultiTargets(this.party.enemy.member, this);
+		return IO.selectAllTargets(this.party.enemy.member, this);
 	}
 	
 	public boolean fireBreathTarget() {
-		return IO.selectMultiTargets(this.party.enemy.member, this);
+		return IO.selectAllTargets(this.party.enemy.member, this);
 	}
 	
 	public boolean toArotTarget() {

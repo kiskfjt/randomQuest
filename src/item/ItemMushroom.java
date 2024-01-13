@@ -26,7 +26,7 @@ public class ItemMushroom extends Item {
 		int num = IO.randomNum(1);
 		if (me.targets.get(0).isAlive()) {
 			if (num == 0) {
-				int mushroomNo = 2;
+				int mushroomNo = IO.randomNum(2);
 
 				switch (mushroomNo) {
 				case 0:// HP小回復
@@ -47,7 +47,7 @@ public class ItemMushroom extends Item {
 					break;
 				}
 			} else {
-				int mushroomNo = 5;
+				int mushroomNo = IO.randomNum(5);;
 
 				switch (mushroomNo) {
 				case 0:

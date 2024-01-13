@@ -7,7 +7,10 @@ import action.ActionBasicGuard;
 import action.ActionEquipment;
 import action.ActionItem;
 import action.ActionMagic;
+import action.magics.ActionMagicDetoxify;
+import action.magics.ActionMagicGreaterHeal;
 import action.magics.ActionMagicHeal;
+import action.magics.ActionMagicHealingCircle;
 import action.magics.ActionMagicProtectAll;
 import action.magics.ActionMagicProtection;
 import action.magics.ActionMagicRevive;
@@ -17,10 +20,10 @@ import others.IO;
 public class PriestChr extends Chr {
 	private final int A_ATTACK = 0;
 	private final int A_GUARD = 1;
-	private final int A_HEAL = 2;
-	private final int A_ITEM = 3;
+	private final int A_ITEM = 2;
 	private final int A_EQUIP = 3;
-	private final int MAX_HP = 9999;
+	private final int A_HEAL = 4;
+	
 	public PriestChr(String name) {
 		super(name, 100, 100, 30, 20, 50, 30, 15);
 		
@@ -28,12 +31,15 @@ public class PriestChr extends Chr {
 		
 		actions.add(new ActionBasicAttack(this));
 		actions.add(new ActionBasicGuard(this));
-		actions.add(new ActionMagicHeal(this));
-		actions.add(new ActionMagicRevive(this));
 		actions.add(new ActionItem(this));
 		actions.add(new ActionEquipment(this));
+		actions.add(new ActionMagicHeal(this));
+		actions.add(new ActionMagicDetoxify(this));
+		actions.add(new ActionMagicRevive(this));
 		actions.add(new ActionMagicProtection(this));
 		actions.add(new ActionMagicProtectAll(this));
+		actions.add(new ActionMagicGreaterHeal(this));
+		actions.add(new ActionMagicHealingCircle(this));
 		
 		setToNPC();
 	}

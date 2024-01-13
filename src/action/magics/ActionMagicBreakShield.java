@@ -12,7 +12,7 @@ public class ActionMagicBreakShield extends ActionMagic {
 		name = "ブレイクシールド";
 		MPCons = 10;
 		buffNo = BUFF_DEF;
-		buffValue = -25;
+		buffValue = -0.25;
 	}
 	
 	// デバフ対象：敵全体

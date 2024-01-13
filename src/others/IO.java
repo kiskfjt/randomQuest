@@ -113,7 +113,7 @@ public class IO {
 				msg("%3s", member.get(i).Lv);
 				msg("%7s", "");
 			} else {
-				msg("%3s", member.get(i).status);
+				msg("%3s", member.get(i).statusStr);
 				msg("%7s", "");
 			}
 		}
@@ -478,14 +478,27 @@ public class IO {
 	 * @param memList
 	 * @param me
 	 */
-	public static boolean selectMultiTargets(ArrayList<Chr> memList, Chr me) {
-		for (Chr c : memList) {
-			if (c.HP > 0) {
+	public static boolean selectMultiAliveTargets(ArrayList<Chr> targetsList, Chr me) {
+		for (Chr c : targetsList) {
+			if (c.isAlive()) {
 				me.targets.add(c);
 			}
 		}
 		return true;
-
+	}
+	
+	/**
+	 * 複数ターゲット選択メソッド
+	 * 生死問わず全てのターゲットをリストに加える
+	 * @param targetsList
+	 * @param me
+	 * @return
+	 */
+	public static boolean selectAllTargets(ArrayList<Chr> targetsList, Chr me) {
+		for (Chr c : targetsList) {
+			me.targets.add(c);
+		}
+		return true;
 	}
 
 	public static int inputNumber(int max) {
@@ -564,21 +577,42 @@ public class IO {
 	 */
 	public static void setStatus(Chr me) {
 		if (me.status == me.STATUS_POISONED) {
+			me.statusStr = "どく";
 			msgln("%sは毒におかされた！", me.name);
 		} else if (me.status == me.STATUS_DEADLY_POISONED) {
+			me.statusStr = "もうどく";
 			msgln("%sは猛毒におかされた！", me.name);
 		} else if (me.status == me.STATUS_PARALYZED) {
+			me.statusStr = "まひ";
 			msgln("%sは体がまひした！", me.name);
 		} else if (me.status == me.STATUS_ASLEEP) {
+			me.statusStr = "ねむり";
 			msgln("%sは眠ってしまった！", me.name);
 		} else if (me.status == me.STATUS_CONFUSED) {
+			me.statusStr = "こんらん";
 			msgln("%sは頭が混乱した！", me.name);
 		} else if (me.status == me.STATUS_SILENT) {
+			me.statusStr = "ちんもく";
 			msgln("%sは沈黙状態になった！", me.name);
 		}
 		
 		if (me.status != me.STATUS_NOMAL) {
 			me.statusTurn = randomNum(STATUS_TURN_MIN, STATUS_TURN_MAX);
+		}
+	}
+	
+	/**
+	 * ステータス異常回復メソッド
+	 * 毒の回復は通常の毒と猛毒両方に有効
+	 * @param me
+	 * @param clearStatusNo
+	 */
+	public static void clearStatus(Chr me, int clearStatusNo) {
+		if (me.status == clearStatusNo || 
+				((me.status == me.STATUS_POISONED || me.status == me.STATUS_DEADLY_POISONED) && 
+						(clearStatusNo == me.STATUS_POISONED || clearStatusNo == me.STATUS_DEADLY_POISONED))) {
+			me.statusTurn = 0;
+			recoverFromAbnormalStatus(me);
 		}
 	}
 	
@@ -690,13 +724,53 @@ public class IO {
 	}
 	
 	/**
-	 * 攻撃を受けた時に生きていればステータスを正常に戻す
+	 * 眠り状態の時、攻撃を受けたあとに生きていればステータスを正常に戻す
 	 * @param me
 	 */
 	public static void recoverFromAsleep(Chr target) {
 		if (target.isAlive() && target.status == target.STATUS_ASLEEP) {
 			target.status = target.STATUS_NOMAL;
 			msgln("%sは目を覚ました！", target.name);
+		}
+	}
+	
+	/**
+	 * 1人のactionをnullにして行動しないようにするメソッド
+	 * @param chr
+	 */
+	public static void clearSingleAction(Chr chr) {
+		chr.action = null;
+	}
+	
+	/**
+	 * 全員のactionをnullにして行動しないようにするメソッド
+	 * @param memList
+	 */
+	public static void clearAllActions(Chr me) {
+		for (Chr chr : me.targets) {
+			clearSingleAction(chr);
+		}
+	}
+	
+	/**
+	 * 対象単体の魔法効果解除メソッド
+	 * @param chr
+	 */
+	public static void clearSingleMagicEffect(Chr chr) {
+		chr.ATK = chr.baseATK;
+		chr.DEF = chr.baseDEF;
+		chr.MAT = chr.baseMAT;
+		chr.MDF = chr.baseMDF;
+		chr.SPD = chr.baseSPD;
+	}
+	
+	/**
+	 * 対象全体の魔法効果解除メソッド
+	 * @param memList
+	 */
+	public static void clearAllMagicEffects(Chr me) {
+		for (Chr chr : me.targets) {
+			clearSingleMagicEffect(chr);
 		}
 	}
 	

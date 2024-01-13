@@ -1,8 +1,6 @@
 package others;
 
 import action.Action;
-import action.ActionMagic;
-import action.ActionSkill;
 import chr.Chr;
 import chr.Party;
 import item.Item;
@@ -10,7 +8,7 @@ import item.Item;
 public class Calc {
 	private static final int CRITICAL_MULTI = 2;
 	
-	public static void physSingleDmg(Chr me, Chr target) {
+	public static int physSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
 		int Dmg = 0;
 		dDmg =  me.ATK * me.action.multi * me.ATKNext * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
@@ -47,10 +45,24 @@ public class Calc {
 			// me.attackedFlg = true;
 			me.ATKNext = me.ATK_MULTI_DEFAULT;
 		}
+		return Dmg;
 	}
 	
 	public static void physSingleDmg(Chr me) {
 		physSingleDmg(me, me.targets.get(0));
+	}
+	
+	/**
+	 * 反動ダメージ有りの物理攻撃ダメージ計算メソッド
+	 * @param me
+	 * @param kickback
+	 */
+	public static void physSingleDmgWithKickback(Chr me, double kickback) {
+		int Dmg = physSingleDmg(me, me.targets.get(0));
+		int kickbackDmg = (int) (Dmg * kickback);
+		me.HP -= kickbackDmg;
+		IO.msgln("%sは%dの反動ダメージをうけた！", me.name, kickbackDmg);
+		IO.judgeHP(me.targets.get(0), me);
 	}
 	
 	public static void physMultiDmg(Chr me) {
@@ -62,6 +74,7 @@ public class Calc {
 			}
 		}
 	}
+	
 	
 	public static void mgcSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
@@ -163,9 +176,6 @@ public class Calc {
 			HPafter = target.HP;
 			value = HPafter - HPbefore;
 			IO.msgln("%sのHPが%d回復した！", target.name, value);
-			
-		} else {
-			IO.msgln("%sはすでに死んでいる！", target.name);
 		}
 	}
 	
@@ -177,15 +187,12 @@ public class Calc {
 	 * @param obj
 	 */
 	public static void singleHeal(Chr me, Chr target, Object obj) {
-		if (obj instanceof ActionMagic) {
-			ActionMagic actMgc = (ActionMagic) obj;
-			singleHeal(me, me.targets.get(0), actMgc.rangeMin, actMgc.rangeMax);
-		} else if (obj instanceof ActionSkill) {
-			ActionSkill actSkl = (ActionSkill) obj;
-			singleHeal(me, me.targets.get(0), actSkl.rangeMin, actSkl.rangeMax);
+		if (obj instanceof Action) {
+			Action act = (Action) obj;
+			singleHeal(me, target, act.rangeMin, act.rangeMax);
 		} else if (obj instanceof Item) {
 			Item itm = (Item) obj;
-			singleHeal(me, me.targets.get(0), itm.rangeMin, itm.rangeMax);
+			singleHeal(me, target, itm.rangeMin, itm.rangeMax);
 		}
 	}
 	

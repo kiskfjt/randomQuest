@@ -69,6 +69,7 @@ public abstract class Chr {
 	public int SPDNext;
 	public int status;
 	public int statusTurn;
+	public String statusStr;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -131,6 +132,7 @@ public abstract class Chr {
 		SPDNext = SPD_NEXT_DEFAULT;
 		status = STATUS_NOMAL;
 		statusTurn = STATUS_TURN_DEFAULT;
+		statusStr = "";
 	}
 	
 	public Chr() {

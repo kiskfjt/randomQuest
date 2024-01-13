@@ -3,18 +3,19 @@ package equipment;
 import chr.Chr;
 import others.IO;
 
-public class EquipmentLeatherHat extends Equipment {
+public class EquipmentRubyOfStrength extends Equipment {
 
-	public EquipmentLeatherHat(Chr me) {
+	public EquipmentRubyOfStrength(Chr me) {
 		super(me);
-		name = "革の帽子";
-		DEF = 5;
+		name = "力のルビー";
+		ATK = 10;
 		addStatus();
 	}
 
 	// 特殊効果なし
 	public boolean playerTarget() {
-		return true;
+		// TODO 自動生成されたメソッド・スタブ
+		return false;
 	}
 
 	// 特殊効果なし
@@ -22,4 +23,5 @@ public class EquipmentLeatherHat extends Equipment {
 		IO.msgln("【%sは%sをつかった！】", me.name, name);
 		IO.msgln("しかし、なにもおこらなかった！");
 	}
+
 }

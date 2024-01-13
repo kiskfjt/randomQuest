@@ -3,12 +3,12 @@ package equipment;
 import chr.Chr;
 import others.IO;
 
-public class EquipmentLeatherHat extends Equipment {
+public class EquipmentAgilityRing extends Equipment {
 
-	public EquipmentLeatherHat(Chr me) {
+	public EquipmentAgilityRing(Chr me) {
 		super(me);
-		name = "革の帽子";
-		DEF = 5;
+		name = "はやてのリング";
+		SPD = 10;
 		addStatus();
 	}
 
@@ -22,4 +22,5 @@ public class EquipmentLeatherHat extends Equipment {
 		IO.msgln("【%sは%sをつかった！】", me.name, name);
 		IO.msgln("しかし、なにもおこらなかった！");
 	}
+
 }

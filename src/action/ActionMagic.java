@@ -8,8 +8,4 @@ public abstract class ActionMagic extends Action {
 		super(me);
 		name = "まほう";
 	}
-	
-	// 消費MP
-	public int MPCons;
-
 }

@@ -35,7 +35,7 @@ public class ItemPrayerRing extends Item {
 		// 一定の確率で無くなる
 		if (IO.probability(probability)) {
 			IO.removeFromItemList(me, this);
-			IO.msgln("%sは音もなく崩れ去った！");
+			IO.msgln("%sは音もなく崩れ去った！", name);
 		}
 	}
 	

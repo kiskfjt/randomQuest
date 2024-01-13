@@ -51,6 +51,9 @@ public abstract class Action {
 	public static final int STATUS_MDF = 3;
 	public static final int STATUS_SPD = 4;
 	
+	// 消費MP
+	public int MPCons;
+	
 	// 命中率
 	public int missRate = MISS_RATE_DEFAULT;
 	

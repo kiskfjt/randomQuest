@@ -5,28 +5,28 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionMagicProtectAll extends ActionMagic {
+public class ActionMagicHealingCircle extends ActionMagic {
 
-	public ActionMagicProtectAll(Chr me) {
+	public ActionMagicHealingCircle(Chr me) {
 		super(me);
-		name = "プロテクトオール";
-		MPCons = 20;
-		buffNo = BUFF_DEF;
-		buffValue = 0.25;
+		name = "ヒーリングサークル";
+		MPCons = 30;
+		rangeMin = 80;
+		rangeMax = 100;
 	}
-	
-	// バフ対象：味方全体
+
+	// 回復対象：味方全体
 	public boolean playerTarget() {
 		return IO.selectAllTargets(me.party.member, me);
 	}
 
-	// 防御バフ：baseDEFの25%アップ
+	// 回復量：80～100の範囲
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 		
-		Calc.multiBuff(me, buffNo, buffValue);
+		Calc.multiHeal(me, this);
 		
 		me.MP -= MPCons;
 	}
-
+	
 }

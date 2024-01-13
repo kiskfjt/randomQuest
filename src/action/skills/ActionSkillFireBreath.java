@@ -17,7 +17,7 @@ public class ActionSkillFireBreath extends ActionSkill {
 	
 	// 攻撃範囲：敵全体
 	public boolean playerTarget() {
-		return IO.selectMultiTargets(me.party.enemy.member, me);
+		return IO.selectAllTargets(me.party.enemy.member, me);
 	}
 
 	// ダメージ：魔法、掛け算方式

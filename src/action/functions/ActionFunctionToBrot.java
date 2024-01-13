@@ -80,7 +80,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 	}
 	
 	public boolean breakShieldTarget() {
-		return IO.selectMultiTargets(me.party.enemy.member, me);
+		return IO.selectAllTargets(me.party.enemy.member, me);
 	}
 	
 	public boolean shippuTarget() {
@@ -89,11 +89,11 @@ public class ActionFunctionToBrot extends ActionFunction {
 	}
 	
 	public boolean mawashigeriTarget() {
-		return IO.selectMultiTargets(me.party.enemy.member, me);
+		return IO.selectAllTargets(me.party.enemy.member, me);
 	}
 	
 	public boolean fireBreathTarget() {
-		return IO.selectMultiTargets(me.party.enemy.member, me);
+		return IO.selectAllTargets(me.party.enemy.member, me);
 	}
 	
 	public boolean toArotTarget() {

@@ -6,11 +6,14 @@ import chr.jobs.BraveChr;
 import chr.jobs.FighterChr;
 import chr.jobs.PriestChr;
 import equipment.Equipment;
+import equipment.EquipmentAgilityRing;
 import equipment.EquipmentFireClaw;
 import equipment.EquipmentGoldBracelet;
 import equipment.EquipmentLeatherHat;
 import equipment.EquipmentLidOfPod;
+import equipment.EquipmentMeteoriteBracelet;
 import equipment.EquipmentNomalClothes;
+import equipment.EquipmentRubyOfStrength;
 import item.ItemElixir;
 import item.ItemGreaterHealingPotion;
 import item.ItemGreaterMagicPotion;
@@ -19,6 +22,7 @@ import item.ItemMagicPotion;
 import item.ItemMaximApple;
 import item.ItemMaximTomato;
 import item.ItemMedHerb;
+import item.ItemMushroom;
 import item.ItemPhoenixTail;
 import item.ItemPrayerRing;
 import item.ItemStone;
@@ -116,7 +120,7 @@ public class Party {
 	
 	private void selectItem(Chr chr) {
 		for (int i = 0; i < MAX_ITEM_NUMBER; i++) {
-			int sumOfItems = 11;
+			int sumOfItems = 12;
 			int itemNo = IO.randomNum(sumOfItems - 1);
 			
 			switch (itemNo) {
@@ -152,6 +156,9 @@ public class Party {
 				break;
 			case 10:
 				chr.items.add(new ItemPrayerRing(chr));
+				break;
+			case 11:
+				chr.items.add(new ItemMushroom(chr));
 				break;
 			}
 		}
@@ -206,11 +213,17 @@ public class Party {
 	}
 	
 	private Equipment selectAccessory(Chr chr) {
-		int accNo = IO.randomNum(0);
+		int accNo = IO.randomNum(3);
 		
 		switch (accNo) {
 		case 0:
 			return new EquipmentGoldBracelet(chr);
+		case 1:
+			return new EquipmentMeteoriteBracelet(chr);
+		case 2:
+			return new EquipmentAgilityRing(chr);
+		case 3:
+			return new EquipmentRubyOfStrength(chr);
 		}
 		return null;
 	}
