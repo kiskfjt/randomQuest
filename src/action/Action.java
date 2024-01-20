@@ -33,6 +33,8 @@ public abstract class Action {
 	// 攻撃、回復等の範囲の最低値、最大値
 	public double rangeMin = RANGE_MIN_DEFAULT_VALUE;
 	public double rangeMax = RANGE_MAX_DEFAULT_VALUE;
+	public int rangeMinInt;
+	public int rangeMaxInt;
 	
 	// バフの種類
 	public int buffNo;
@@ -54,7 +56,7 @@ public abstract class Action {
 	// 消費MP
 	public int MPCons;
 	
-	// 命中率
+	// ミス率
 	public int missRate = MISS_RATE_DEFAULT;
 	
 	// 会心痛恨率

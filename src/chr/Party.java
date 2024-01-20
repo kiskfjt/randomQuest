@@ -3,8 +3,11 @@ package chr;
 import java.util.ArrayList;
 
 import chr.jobs.BraveChr;
+import chr.jobs.DancerChr;
 import chr.jobs.FighterChr;
+import chr.jobs.LuminaryChr;
 import chr.jobs.PriestChr;
+import chr.jobs.WarriorChr;
 import equipment.Equipment;
 import equipment.EquipmentAgilityRing;
 import equipment.EquipmentFireClaw;
@@ -102,7 +105,7 @@ public class Party {
 	
 	private Chr selectJob(String name) {
 		Chr chr = null;
-		int sumOfJobs = 3;
+		int sumOfJobs = 6;
 		int jobNo = IO.randomNum(sumOfJobs - 1);// ジョブ数-1を記入
 		switch (jobNo) {
 		case 0:
@@ -113,6 +116,15 @@ public class Party {
 			break;
 		case 2:
 			chr = new FighterChr(name);
+			break;
+		case 3:
+			chr = new WarriorChr(name);
+			break;
+		case 4:
+			chr = new DancerChr(name);
+			break;
+		case 5:
+			chr = new LuminaryChr(name);
 			break;
 		}
 		return chr;

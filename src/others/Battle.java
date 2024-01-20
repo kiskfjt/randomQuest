@@ -213,7 +213,7 @@ public class Battle {
 					continue;
 				}
 			}
-			// 蘇生されたばかりの場合もスキップ
+			// アクションが設定されていない、もしくは蘇生されたばかりの場合もスキップ
 			if (c.action == null)
 				continue;
 			

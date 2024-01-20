@@ -24,6 +24,10 @@ public class ActionMagicInvincible extends ActionMagic {
 		IO.msgln("%sたちの体が鋼鉄に変化した！", me.name);
 		
 		IO.clearAllActions(me);
+		
+		for (Chr chr : me.targets) {
+			chr.DEFNext = 999999999;
+		}
 	}
 
 }
