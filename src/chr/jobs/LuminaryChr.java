@@ -5,14 +5,19 @@ import action.ActionBasicGuard;
 import action.ActionEquipment;
 import action.ActionItem;
 import action.magics.ActionMagicInvincible;
+import action.magics.ActionMagicLightning;
+import action.magics.ActionMagicSongOfNymph;
 import action.skills.ActionSkillDazzleFlash;
 import action.skills.ActionSkillHustleDance;
+import action.skills.ActionSkillKerplunkDance;
+import action.skills.ActionSkillMoonSault;
+import action.skills.ActionSkillSpookyAura;
 import chr.Chr;
 
 public class LuminaryChr extends Chr {
 	
-	public LuminaryChr(String name) {
-		super(name, 200, 100, 45, 30, 40, 30, 30);
+	public LuminaryChr() {
+		super(200, 100, 45, 30, 40, 30, 30);
 		
 		jobName = "スーパースター";
 		
@@ -23,13 +28,16 @@ public class LuminaryChr extends Chr {
 		
 		actions.add(new ActionSkillDazzleFlash(this));
 		actions.add(new ActionMagicInvincible(this));
+		actions.add(new ActionMagicLightning(this));
+		actions.add(new ActionSkillKerplunkDance(this));
+		actions.add(new ActionSkillSpookyAura(this));
 		actions.add(new ActionSkillHustleDance(this));
+		actions.add(new ActionSkillMoonSault(this));
+		actions.add(new ActionMagicSongOfNymph(this));
 	}
 	
-	@Override
 	public boolean nonPlayerCommand() {
-		// TODO 自動生成されたメソッド・スタブ
-		return false;
+		return true;
 	}
 
 }

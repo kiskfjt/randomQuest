@@ -14,8 +14,8 @@ import chr.Chr;
 
 public class WarriorChr extends Chr {
 	
-	public WarriorChr(String name) {
-		super(name, 160, 50, 50, 30, 25, 20, 20);
+	public WarriorChr() {
+		super(160, 50, 50, 30, 25, 20, 20);
 		
 		jobName = "せんし";
 		

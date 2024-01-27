@@ -13,10 +13,8 @@ public class ActionMagicRevive extends ActionMagic {
 		MPCons = 20;
 		rangeMin = 0.4;
 		rangeMax = 0.6;
+		successRate = 50;
 	}
-	
-	// 蘇生の確率（%）
-	private int probability = 50;
 	
 	// 対象：味方単体
 	public boolean playerTarget() {
@@ -27,7 +25,7 @@ public class ActionMagicRevive extends ActionMagic {
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 
-		Calc.revive(me, rangeMin, rangeMax, probability);
+		Calc.revive(me);
 		
 		Calc.subtractMPConsIfTargetIsDead(me, MPCons);
 	}

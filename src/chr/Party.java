@@ -1,5 +1,6 @@
 package chr;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import chr.jobs.BraveChr;
@@ -45,14 +46,22 @@ public class Party {
 	
 	public Party(String[] name, int partyKind) {
 		member = new ArrayList<>();
+		ArrayList<String> chrList = makeChrList();
+		ArrayList<String> skillList = makeSkillList();
 		for (int i = 0; i < name.length; i++) {
 			Chr chr = null;
 			// ジョブをランダム選択する
-			chr = selectJob(name[i]);
+			chr = (Chr) randomPickup(chrList);
+			
+			// 名前の設定
+			chr.name = name[i];
 			
 			// レベルをランダム選択する
 			chr.Lv = IO.randomNum(LV_MAX_VALUE);
 			setStatus(chr);
+			
+			// 追加スキルをランダム選択する
+			
 			
 			// そうびをランダム選択する
 			selectEquipment(chr);
@@ -109,22 +118,22 @@ public class Party {
 		int jobNo = IO.randomNum(sumOfJobs - 1);// ジョブ数-1を記入
 		switch (jobNo) {
 		case 0:
-			chr = new BraveChr(name);
+			chr = new BraveChr();
 			break;
 		case 1:
-			chr = new PriestChr(name);
+			chr = new PriestChr();
 			break;
 		case 2:
-			chr = new FighterChr(name);
+			chr = new FighterChr();
 			break;
 		case 3:
-			chr = new WarriorChr(name);
+			chr = new WarriorChr();
 			break;
 		case 4:
-			chr = new DancerChr(name);
+			chr = new DancerChr();
 			break;
 		case 5:
-			chr = new LuminaryChr(name);
+			chr = new LuminaryChr();
 			break;
 		}
 		return chr;
@@ -248,5 +257,43 @@ public class Party {
 		chr.MAT = chr.baseMAT += chr.baseMAT * chr.Lv / MULTI_BY_LV_DEFAULT;
 		chr.MDF = chr.baseMDF += chr.baseMDF * chr.Lv / MULTI_BY_LV_DEFAULT;
 		chr.SPD = chr.baseSPD += chr.baseSPD * chr.Lv / MULTI_BY_LV_DEFAULT;
+	}
+	
+	private ArrayList<String> makeChrList() {
+		ArrayList<String> list = new ArrayList<>();
+		list.add("chr.jobs.BraveChr");
+		list.add("chr.jobs.DancerChr");
+		list.add("chr.jobs.FighterChr");
+		list.add("chr.jobs.LuminaryChr");
+		list.add("chr.jobs.PriestChr");
+		list.add("chr.jobs.WarriorChr");
+		
+		return list;
+	}
+	
+	private ArrayList<String> makeSkillList() {
+		ArrayList<String> list = new ArrayList<>();
+		return list;
+	}
+	
+	private Object randomPickup(ArrayList<String> strList) {
+		int objectNo = IO.randomNum(strList.size() - 1);
+		String str = strList.get(objectNo);
+		Object obj = null;
+		try {
+			Class<?> cls = Class.forName(str);
+			obj = cls.getDeclaredConstructor().newInstance();
+		} catch (ClassNotFoundException ex){// Class.forNameで発生する可能性
+			ex.printStackTrace();
+		} catch (InvocationTargetException ex) {// Class.getDeclaredConstructor()で発生する可能性
+			ex.printStackTrace();
+		} catch (NoSuchMethodException ex) {// Class.getDeclaredConstructor()で発生する可能性
+			ex.printStackTrace();	
+		} catch (IllegalAccessException ex) {// Class.newInstanceで発生する可能性
+			ex.printStackTrace();
+		} catch (InstantiationException ex) {// Class.newInstanceで発生する可能性
+			ex.printStackTrace();
+		}
+		return obj;
 	}
 }

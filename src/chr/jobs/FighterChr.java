@@ -12,8 +12,8 @@ import chr.Chr;
 
 public class FighterChr extends Chr {
 	
-	public FighterChr(String name) {
-		super(name, 200, 30, 50, 30, 25, 20, 25);
+	public FighterChr() {
+		super(200, 30, 50, 30, 25, 20, 25);
 		
 		jobName = "格闘家";
 		

@@ -52,6 +52,10 @@ public class IO {
 	private static final double POISONED_DAMAGE_MAX = 0.06;
 	private static final double DEADLY_POISONED_DAMAGE_MIN = 0.14;
 	private static final double DEADLY_POISONED_DAMAGE_MAX = 0.16;
+	
+	// 耐性関連の定数
+	private static final double MAGIC_RESISTANCE_MIN = 0.5;
+	private static final double MAGIC_RESISTANCE_MAX = 1.5;
 
 	public static void printStatus(ArrayList<Chr> member) {
 		msgln("***********************************");
@@ -676,6 +680,11 @@ public class IO {
 				msgln("%sはじゅもんが使えない！", me.name);
 			}
 			me.statusTurn--;
+		} else if (me.status == me.STATUS_SING) {
+			me.statusTurn--;
+			if (me.statusTurn == 0) {
+				me.action.execute();
+			}
 		}
 		return cantMove;
 	}
@@ -696,6 +705,8 @@ public class IO {
 			me.HP -= dmg;
 			msgln("%sは%dの猛毒のダメージを受けた！", me.name, dmg);
 			judgeHP(me.party.enemy.member.get(0), me);
+			me.statusTurn--;
+		} else if (me.status == me.STATUS_INVINCIBLE) {
 			me.statusTurn--;
 		}
 	}
@@ -718,6 +729,8 @@ public class IO {
 				msgln("%sは正気に戻った！", me.name);
 			} else if (me.status == me.STATUS_SILENT) {
 				msgln("%sは喋れるようになった！", me.name);
+			} else if (me.status == me.STATUS_INVINCIBLE) {
+				msgln("%sの鋼鉄化がとけた！", me.name);
 			}
 			me.status = me.STATUS_NOMAL;
 		}
@@ -732,6 +745,20 @@ public class IO {
 			target.status = target.STATUS_NOMAL;
 			msgln("%sは目を覚ました！", target.name);
 		}
+	}
+	
+	/**
+	 * 状態異常の種類によりターゲット選択とコマンド選択をスキップさせるためのメソッド
+	 * @param chr
+	 * @return
+	 */
+	public static boolean checkStatusBeforeCommand(Chr chr) {
+		// 歌ってるときはスキップ
+		if (chr.status == chr.STATUS_SING) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -771,6 +798,41 @@ public class IO {
 	public static void clearAllMagicEffects(Chr me) {
 		for (Chr chr : me.targets) {
 			clearSingleMagicEffect(chr);
+		}
+	}
+	
+	
+	public static void changeMagicResistance(Chr me) {
+		for (Chr target : me.targets) {
+			if (target.canLowerMagicResistance) {
+				if (IO.probability(me.action.successRate)) {
+					double before = target.magicResistance;
+					double value = 0;
+					target.magicResistance -= me.action.effectValue;
+
+					if (target.magicResistance < MAGIC_RESISTANCE_MIN) {
+						value = MAGIC_RESISTANCE_MIN - before;
+						target.magicResistance = MAGIC_RESISTANCE_MIN;
+					} else if (target.magicResistance > MAGIC_RESISTANCE_MAX) {
+						value = MAGIC_RESISTANCE_MAX - before;
+						target.magicResistance = MAGIC_RESISTANCE_MAX;
+					} else {
+						value = target.magicResistance - before;
+					}
+
+					if (value < 0) {
+						IO.msgln("%sの魔法耐性が%d％下がった！", target.name, value * -100);
+					} else if (value < 0) {
+						IO.msgln("%sの魔法耐性が%d％上がった！", target.name, value * 100);
+					} else {
+						IO.msgln("%sの魔法耐性はこれ以上変わらない！", target.name);
+					}
+				} else {
+					IO.msgln("%sには効かなかった", target.name);
+				}
+			} else {
+				IO.msgln("%sには効果がないようだ", target.name);
+			}
 		}
 	}
 	

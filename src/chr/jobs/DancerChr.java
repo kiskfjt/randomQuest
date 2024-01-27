@@ -10,8 +10,8 @@ import chr.Chr;
 
 public class DancerChr extends Chr {
 	
-	public DancerChr(String name) {
-		super(name, 150, 50, 30, 20, 30, 20, 25);
+	public DancerChr() {
+		super(150, 50, 30, 20, 30, 20, 25);
 		
 		jobName = "踊り子";
 		

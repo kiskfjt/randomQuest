@@ -24,8 +24,8 @@ public class PriestChr extends Chr {
 	private final int A_EQUIP = 3;
 	private final int A_HEAL = 4;
 	
-	public PriestChr(String name) {
-		super(name, 100, 100, 30, 20, 50, 30, 15);
+	public PriestChr() {
+		super(100, 100, 30, 20, 50, 30, 15);
 		
 		jobName = "そうりょ";
 		

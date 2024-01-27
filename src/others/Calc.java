@@ -48,8 +48,13 @@ public class Calc {
 		return Dmg;
 	}
 	
-	public static void physSingleDmg(Chr me) {
-		physSingleDmg(me, me.targets.get(0));
+	/**
+	 * 単体物理ダメージ計算式
+	 * 通常はこれで計算を受け付ける
+	 * @param me
+	 */
+	public static int physSingleDmg(Chr me) {
+		return physSingleDmg(me, me.targets.get(0));
 	}
 	
 	/**
@@ -75,12 +80,66 @@ public class Calc {
 		}
 	}
 	
+	/**
+	 * rangeMinからrangeMaxの範囲内でランダムな値をダメージとして計算する
+	 * @param me
+	 * @param target
+	 * @return
+	 */
+	public static int physRangeSingleDmg(Chr me, Chr target) {
+		double dDmg = 0;
+		int Dmg = 0;
+		dDmg = IO.randomNum(me.action.rangeMinInt, me.action.rangeMaxInt)
+			   / target.DEFNext;
+		Dmg = (int) dDmg;
+		
+		// 確率判定
+		if (IO.probability(me.action.missRate)) {
+			Dmg = 0;
+			IO.msgln("%sはひらりとかわした！", target.name);
+		} else {
+			// 会心痛恨判定（物理攻撃のみ）
+			if (Dmg > 0 && IO.probability(me.action.criticalRate)) {
+				Dmg *= CRITICAL_MULTI;
+				if (me.party.pKind == Party.PARTY_KIND_ALLY) {
+					IO.msgln("<<かいしんのいちげき！>>");
+				} else {
+					IO.msgln("<<つうこんのいちげき！>>");
+				}
+			}
+			if (Dmg < 0) {
+				Dmg = 0;
+			} else if (Dmg > Chr.MAX_HP) {
+				Dmg = Chr.MAX_HP;
+			}
+			IO.msgln("%sに%dのダメージ！", target.name, Dmg);
+			target.HP -= Dmg;
+			IO.judgeHP(me, target);
+			IO.recoverFromAsleep(target);
+		}
+		
+		// 1回のみのバフの消化。攻撃が外れても消化する
+		if (me.ATKNext != me.ATK_MULTI_DEFAULT) {
+			// me.attackedFlg = true;
+			me.ATKNext = me.ATK_MULTI_DEFAULT;
+		}
+		return Dmg;
+	}
+	
+	/**
+	 * 単体範囲物理ダメージ計算式
+	 * 通常はこれで計算を受け付ける
+	 * @param me
+	 */
+	public static int physRangeSingleDmg(Chr me) {
+		return physRangeSingleDmg(me, me.targets.get(0));
+	}
 	
 	public static void mgcSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
 		int Dmg = 0;
 		dDmg = me.MAT * me.action.multi * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
-				/ target.MDF / target.DEFNext;
+				/ target.MDF / target.DEFNext * target.magicResistance;
 		Dmg = (int) dDmg;
 		
 		judgeProbabilityAndFixDmg(me, target, Dmg);
@@ -217,9 +276,13 @@ public class Calc {
 		}
 	}
 	
-	
-	public static void maxSingleHeal(Chr me) {
-		Chr target = me.targets.get(0);
+	/**
+	 * 単体HP全快メソッド
+	 * 実際に回復処理を行っているのがこれ
+	 * @param target
+	 * @param me
+	 */
+	public static void maxSingleHeal(Chr target, Chr me) {
 		if (target.isAlive()) {
 			target.HP = target.maxHP;
 			IO.msgln("%sのHPが全回復した！", target.name);
@@ -228,6 +291,22 @@ public class Calc {
 		}
 	}
 	
+	/**
+	 * 単体HP全快メソッドの引数1つ版
+	 * このメソッドで主に全快処理を受け付ける
+	 * @param me
+	 */
+	public static void maxSingleHeal(Chr me) {
+		maxSingleHeal(me.targets.get(0), me);
+	}
+	
+	/**
+	 * 全体HP全快メソッド
+	 * @param me
+	 */
+	public static void maxMultiHeal(Chr me) {
+		me.targets.forEach(chr -> maxSingleHeal(chr, me));
+	}
 	
 	public static void singleBuff(Chr me, Chr target, int buffNo, double buffValue) {
 		int buff = 0;
@@ -235,70 +314,82 @@ public class Calc {
 		String buffName = "";
 		
 		if (buffNo == Action.BUFF_ATK) {
-			beforeBuff = target.ATK;
-			buff = (int) (target.baseATK * buffValue);
-			target.ATK += buff;
-			if (target.ATK > target.baseATK * target.MAX_ATK_COEF) {
-				target.ATK = target.baseATK * target.MAX_ATK_COEF;
-				buff = target.ATK - beforeBuff;
-			} else if (target.ATK < target.baseATK * target.MIN_ATK_COEF) {
-				target.ATK = (int)(target.baseATK * target.MIN_ATK_COEF);
-				buff = beforeBuff - target.ATK;
+			if (target.canLowerATK) {
+				beforeBuff = target.ATK;
+				buff = (int) (target.baseATK * buffValue);
+				target.ATK += buff;
+				if (target.ATK > target.baseATK * target.MAX_ATK_COEF) {
+					target.ATK = target.baseATK * target.MAX_ATK_COEF;
+					buff = target.ATK - beforeBuff;
+				} else if (target.ATK < target.baseATK * target.MIN_ATK_COEF) {
+					target.ATK = (int) (target.baseATK * target.MIN_ATK_COEF);
+					buff = beforeBuff - target.ATK;
+				}
+				buffName = "ATK";
 			}
-			buffName = "ATK";
 		} else if (buffNo == Action.BUFF_DEF) {
-			beforeBuff = target.DEF;
-			buff = (int) (target.baseDEF * buffValue);
-			target.DEF += buff;
-			if (target.DEF > target.baseDEF * target.MAX_DEF_COEF) {
-				target.DEF = target.baseDEF * target.MAX_DEF_COEF;
-				buff = target.DEF - beforeBuff;
-			} else if (target.DEF < target.baseDEF * target.MIN_DEF_COEF) {
-				target.DEF = (int)(target.baseDEF * target.MIN_DEF_COEF);
-				buff = beforeBuff - target.DEF;
+			if (target.canLowerDEF) {
+				beforeBuff = target.DEF;
+				buff = (int) (target.baseDEF * buffValue);
+				target.DEF += buff;
+				if (target.DEF > target.baseDEF * target.MAX_DEF_COEF) {
+					target.DEF = target.baseDEF * target.MAX_DEF_COEF;
+					buff = target.DEF - beforeBuff;
+				} else if (target.DEF < target.baseDEF * target.MIN_DEF_COEF) {
+					target.DEF = (int) (target.baseDEF * target.MIN_DEF_COEF);
+					buff = beforeBuff - target.DEF;
+				}
+				buffName = "DEF";
 			}
-			buffName = "DEF";
 		} else if (buffNo == Action.BUFF_MAT) {
-			beforeBuff = target.MAT;
-			buff = (int) (target.baseMAT * buffValue);
-			target.MAT += buff;
-			if (target.MAT > target.baseMAT * target.MAX_MAT_COEF) {
-				target.MAT = target.baseMAT * target.MAX_MAT_COEF;
-				buff = target.MAT - beforeBuff;
-			} else if (target.MAT < target.baseMAT * target.MIN_MAT_COEF) {
-				target.MAT = (int)(target.baseMAT * target.MIN_MAT_COEF);
-				buff = beforeBuff - target.MAT;
+			if (target.canLowerMAT) {
+				beforeBuff = target.MAT;
+				buff = (int) (target.baseMAT * buffValue);
+				target.MAT += buff;
+				if (target.MAT > target.baseMAT * target.MAX_MAT_COEF) {
+					target.MAT = target.baseMAT * target.MAX_MAT_COEF;
+					buff = target.MAT - beforeBuff;
+				} else if (target.MAT < target.baseMAT * target.MIN_MAT_COEF) {
+					target.MAT = (int) (target.baseMAT * target.MIN_MAT_COEF);
+					buff = beforeBuff - target.MAT;
+				}
+				buffName = "MAT";
 			}
-			buffName = "MAT";
 		} else if (buffNo == Action.BUFF_MDF) {
-			beforeBuff = target.MDF;
-			buff = (int) (target.baseMDF * buffValue);
-			target.MDF += buff;
-			if (target.MDF > target.baseMDF * target.MAX_MDF_COEF) {
-				target.MDF = target.baseMDF * target.MAX_MDF_COEF;
-				buff = target.MDF - beforeBuff;
-			} else if (target.MDF < target.baseMDF * target.MIN_MDF_COEF) {
-				target.MDF = (int)(target.baseMDF * target.MIN_MDF_COEF);
-				buff = beforeBuff - target.MDF;
+			if (target.canLowerMDF) {
+				beforeBuff = target.MDF;
+				buff = (int) (target.baseMDF * buffValue);
+				target.MDF += buff;
+				if (target.MDF > target.baseMDF * target.MAX_MDF_COEF) {
+					target.MDF = target.baseMDF * target.MAX_MDF_COEF;
+					buff = target.MDF - beforeBuff;
+				} else if (target.MDF < target.baseMDF * target.MIN_MDF_COEF) {
+					target.MDF = (int) (target.baseMDF * target.MIN_MDF_COEF);
+					buff = beforeBuff - target.MDF;
+				}
+				buffName = "MDF";
 			}
-			buffName = "MDF";
 		} else if (buffNo == Action.BUFF_SPD) {
-			beforeBuff = target.SPD;
-			buff = (int) (target.baseSPD * buffValue);
-			target.SPD += buff;
-			if (target.SPD > target.baseSPD * target.MAX_SPD_COEF) {
-				target.SPD = target.baseSPD * target.MAX_SPD_COEF;
-				buff = target.SPD - beforeBuff;
-			} else if (target.SPD < target.baseSPD * target.MIN_SPD_COEF) {
-				target.SPD = (int)(target.baseSPD * target.MIN_SPD_COEF);
-				buff = beforeBuff - target.SPD;
+			if (target.canLowerSPD) {
+				beforeBuff = target.SPD;
+				buff = (int) (target.baseSPD * buffValue);
+				target.SPD += buff;
+				if (target.SPD > target.baseSPD * target.MAX_SPD_COEF) {
+					target.SPD = target.baseSPD * target.MAX_SPD_COEF;
+					buff = target.SPD - beforeBuff;
+				} else if (target.SPD < target.baseSPD * target.MIN_SPD_COEF) {
+					target.SPD = (int) (target.baseSPD * target.MIN_SPD_COEF);
+					buff = beforeBuff - target.SPD;
+				}
+				buffName = "SPD";
+				target.buffSPD = target.SPD - target.baseSPD;
 			}
-			buffName = "SPD";
-			target.buffSPD = target.SPD - target.baseSPD; 
 		}
 		
 		if (buff > 0) {
 			IO.msgln("%sの%sが%d増加した！", target.name, buffName, buff);
+		} else if (buff == 0 && beforeBuff == 0) {
+			IO.msgln("%sには効果がないみたいだ", target.name);
 		} else if (buff == 0) {
 			IO.msgln("しかし、何も変わらなかった！");
 		} else if (buff < 0) {
@@ -321,17 +412,42 @@ public class Calc {
 		}
 	}
 	
-	public static void revive(Chr me, double rangeMin, double rangeMax, int p) {
-		Chr target = me.targets.get(0);
-		boolean isRevived = IO.probability(p);
+	/**
+	 * 単体蘇生メソッド
+	 * 実際に蘇生処理をしているのがこれ
+	 * @param target
+	 * @param me
+	 */
+	public static void revive(Chr target, Chr me) {
+		boolean isRevived = IO.probability(me.action.successRate);
 		
 		if (target.HP > 0) {
 			IO.msgln("しかし何も起こらなかった！");
 		} else if (target.HP == 0 && isRevived) {
-			target.HP = (int) (target.maxHP * IO.randomNum(rangeMin, rangeMax));
+			target.HP = (int) (target.maxHP * IO.randomNum(me.action.rangeMin, me.action.rangeMax));
 			IO.msgln("%sは生き返った！", target.name);
 		} else {
 			IO.msgln("しかし%sは生き返らなかった！", target.name);
+		}
+	}
+	
+	/**
+	 * 単体蘇生メソッド
+	 * 引数meで受け取るのがこれ
+	 * @param me
+	 */
+	public static void revive(Chr me) {
+		revive(me.targets.get(0), me);
+	}
+	
+	/**
+	 * 複数蘇生メソッド
+	 * @param memList
+	 * @param me
+	 */
+	public static void multiRevive(Chr me) {
+		for (Chr chr : me.targets) {
+			revive(chr);
 		}
 	}
 	

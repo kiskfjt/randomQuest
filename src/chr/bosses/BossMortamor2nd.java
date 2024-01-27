@@ -33,7 +33,7 @@ public class BossMortamor2nd extends Chr {
 	}
 	
 	public BossMortamor2nd(String name) {
-		super(name, 3000, 200, 100, 60, 100, 60, 40);
+		super(3000, 200, 100, 60, 100, 60, 40);
 		
 		jobName = "Mortamor2nd";
 		
@@ -44,6 +44,14 @@ public class BossMortamor2nd extends Chr {
 		actions.add(new ActionMagicProtection(this));
 		actions.add(new ActionSkillHardDefense(this));
 		actions.add(new ActionFunctionToBrot(this));
+		
+		// 耐性設定
+		this.canLowerATK = false;
+		this.canLowerDEF = false;
+		this.canLowerMAT = false;
+		this.canLowerMDF = false;
+		this.canLowerSPD = false;
+		this.canLowerMagicResistance = false;
 		
 		this.actionTurnDefault = A_TURN_DEFAULT;
 		

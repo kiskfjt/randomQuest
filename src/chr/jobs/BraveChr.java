@@ -20,8 +20,8 @@ public class BraveChr extends Chr {
 	private final int A_EQUIP = 3;
 	// private final int A_MAWASHIGERI = 4;
 	
-	public BraveChr(String name) {
-		super(name, 200, 50, 50, 30, 50, 30, 25);
+	public BraveChr() {
+		super(200, 50, 50, 30, 50, 30, 25);
 		
 		jobName = "ゆうしゃ";
 		

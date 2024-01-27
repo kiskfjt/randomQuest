@@ -11,6 +11,9 @@ public class ActionMagicInvincible extends ActionMagic {
 		name = "鋼鉄化";
 		MPCons = 10;
 	}
+	
+	private final String statusStr = "鋼鉄";
+	private final int statusTurn = 1;
 
 	// 効果対象：味方全体
 	public boolean playerTarget() {
@@ -24,6 +27,10 @@ public class ActionMagicInvincible extends ActionMagic {
 		IO.msgln("%sたちの体が鋼鉄に変化した！", me.name);
 		
 		IO.clearAllActions(me);
+		
+		me.status = me.STATUS_INVINCIBLE;
+		me.statusStr = this.statusStr;
+		me.statusTurn = this.statusTurn;
 		
 		for (Chr chr : me.targets) {
 			chr.DEFNext = 999999999;

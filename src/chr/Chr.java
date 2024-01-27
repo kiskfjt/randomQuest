@@ -16,8 +16,9 @@ public abstract class Chr {
 	public final int MAX_SPD = 999;
 	private final int LV_DEFAULT = 1;
 	private final int ACTION_TURN_DEFAULT = 1;
-	// private final boolean ATTACKED_FLG_DEFAULT = false;
 	public static final int STATUS_TURN_DEFAULT = 0;
+	private final double MAGIC_RESISTANCE_DEFAULT = 1.0;
+	private final boolean RESISTANCE_DEFAULT = true;
 	
 	// 状態異常の定数
 	public final int STATUS_NOMAL = 0;
@@ -27,6 +28,11 @@ public abstract class Chr {
 	public final int STATUS_ASLEEP = 4;
 	public final int STATUS_CONFUSED = 5;
 	public final int STATUS_SILENT = 6;
+	
+	// スキルや魔法、アイテムによる状態変化の定数
+	public final int STATUS_INVINCIBLE = 20;
+	public final int STATUS_SING = 21;
+	
 	
 	
 	
@@ -70,6 +76,15 @@ public abstract class Chr {
 	public int status;
 	public int statusTurn;
 	public String statusStr;
+	public double magicResistance;
+	
+	// 耐性関連
+	public boolean canLowerATK;
+	public boolean canLowerDEF;
+	public boolean canLowerMAT;
+	public boolean canLowerMDF;
+	public boolean canLowerSPD;
+	public boolean canLowerMagicResistance;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -95,8 +110,7 @@ public abstract class Chr {
 	public final double MIN_MDF_COEF = 0.5;
 	public final double MIN_SPD_COEF = 0.5;
 	
-	public Chr(String name, int maxHP, int maxMP, int baseATK, int baseDEF, int baseMAT, int baseMDF, int baseSPD) {
-		this.name = name;
+	public Chr(int maxHP, int maxMP, int baseATK, int baseDEF, int baseMAT, int baseMDF, int baseSPD) {
 		this.HP = this.maxHP = maxHP;
 		this.MP = this.maxMP = maxMP;
 		this.ATK = this.baseATK = baseATK;
@@ -133,6 +147,16 @@ public abstract class Chr {
 		status = STATUS_NOMAL;
 		statusTurn = STATUS_TURN_DEFAULT;
 		statusStr = "";
+		magicResistance = MAGIC_RESISTANCE_DEFAULT;
+		
+		// 耐性関連
+		canLowerATK = RESISTANCE_DEFAULT;
+		canLowerDEF = RESISTANCE_DEFAULT;
+		canLowerMAT = RESISTANCE_DEFAULT;
+		canLowerMDF = RESISTANCE_DEFAULT;
+		canLowerSPD = RESISTANCE_DEFAULT;
+		
+		canLowerMagicResistance = RESISTANCE_DEFAULT;
 	}
 	
 	public Chr() {

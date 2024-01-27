@@ -46,6 +46,9 @@ public abstract class Action {
 	// バフ効果量
 	public double buffValue;
 	
+	// その他効果量
+	public double effectValue;
+	
 	// ステータスの種類
 	public static final int STATUS_ATK = 0;
 	public static final int STATUS_DEF = 1;
@@ -55,6 +58,9 @@ public abstract class Action {
 	
 	// 消費MP
 	public int MPCons;
+	
+	// 成功率
+	public int successRate;
 	
 	// ミス率
 	public int missRate = MISS_RATE_DEFAULT;

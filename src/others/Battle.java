@@ -171,27 +171,32 @@ public class Battle {
 		boolean isBack = false;// 戻るコマンドを使用したかどうか
 		for (int i = 0; i < allList.length; i++) {
 			Chr chr = allList[i];
-			if (chr.action != null) {
-				chr.targets.clear();
-			}
-			chr.action = null;
-			
-			// 死んでたらスキップ
-			if (chr.isDead()) {
-				if (i > 0 && isBack) {
-					i -= 2;
-					continue;
-				} else {
-					continue;
+			// ターゲットとコマンドを前ターンのままにしたい場合はスキップ
+			if (IO.checkStatusBeforeCommand(chr)) {
+				continue;
+			} else {
+				if (chr.action != null) {
+					chr.targets.clear();
 				}
-			}
-			
-			isBack = !chr.command.get();
-			if (isBack) {
-				if (i == 0) {
-					i--;// PCActionがセットされていない、かつ先頭キャラの場合はもう一度コマンド選択する
-				} else {
-					i -= 2;// PCActionがセットされていない、かつ先頭キャラでない場合は1つ前のキャラのコマンド選択に戻る
+				chr.action = null;
+
+				// 死んでたらスキップ
+				if (chr.isDead()) {
+					if (i > 0 && isBack) {
+						i -= 2;
+						continue;
+					} else {
+						continue;
+					}
+				}
+
+				isBack = !chr.command.get();
+				if (isBack) {
+					if (i == 0) {
+						i--;// PCActionがセットされていない、かつ先頭キャラの場合はもう一度コマンド選択する
+					} else {
+						i -= 2;// PCActionがセットされていない、かつ先頭キャラでない場合は1つ前のキャラのコマンド選択に戻る
+					}
 				}
 			}
 		}

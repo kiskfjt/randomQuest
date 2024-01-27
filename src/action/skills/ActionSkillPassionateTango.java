@@ -2,6 +2,7 @@ package action.skills;
 
 import action.ActionSkill;
 import chr.Chr;
+import others.Calc;
 import others.IO;
 
 public class ActionSkillPassionateTango extends ActionSkill {
@@ -22,11 +23,11 @@ public class ActionSkillPassionateTango extends ActionSkill {
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 		
-		int value = IO.randomNum(rangeMinInt, rangeMaxInt);
+		int dmg = Calc.physRangeSingleDmg(me);
 
-		me.targets.get(0).HP -= value;
+		me.HP += dmg;
 
-		IO.msgln("%sのHPを%d吸収した！", me.targets.get(0).name, value);
+		IO.msgln("%sのHPを%d吸収した！", me.targets.get(0).name, dmg);
 	}
 
 }
