@@ -534,7 +534,7 @@ public class IO {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
 			defender.status = defender.STATUS_NOMAL;
-			if (attacker.party.pKind == Party.PARTY_KIND_ALLY) {
+			if (defender.party.pKind == Party.PARTY_KIND_ENEMY) {
 				System.out.println(defender.name + "をたおした！");
 			} else {
 				System.out.println(defender.name + "はしんでしまった！");
@@ -832,6 +832,7 @@ public class IO {
 		for (Chr chr : me.targets) {
 			clearSingleMagicEffect(chr);
 		}
+		IO.msgln("%sたちの全ての魔法の効き目がなくなった！", me.targets.get(0).name);
 	}
 	
 	
