@@ -22,7 +22,7 @@ public class ActionMagicGreaterHeal extends ActionMagic {
 
 	// 回復：100～120の範囲
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 
 		Calc.singleHeal(me, this);
 

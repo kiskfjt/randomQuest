@@ -78,7 +78,7 @@ public class ItemMushroom extends Item {
 			}
 			IO.removeFromItemList(me, this);
 		} else {
-			IO.msgln("%sはすでに死んでいる！");
+			IO.msgln("%sはすでに死んでいる！", me.targets.get(0).name);
 		}
 		IO.setStatus(me);
 	}

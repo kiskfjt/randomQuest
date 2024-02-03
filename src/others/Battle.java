@@ -212,12 +212,14 @@ public class Battle {
 			// 死んでたらスキップ
 			if (c.isDead())
 				continue;
+			
 			// 行動前状態異常の影響実行
 			if (c.status != 0) {
-				if(IO.doStatusEffectBeforeAction(c, allList)) {
+				if (IO.doStatusEffectBeforeAction(c, allList)) {
 					continue;
 				}
 			}
+			
 			// アクションが設定されていない、もしくは蘇生されたばかりの場合もスキップ
 			if (c.action == null)
 				continue;
@@ -269,7 +271,7 @@ public class Battle {
 		}
 		
 		// 全員の行動が終わった後に状態異常の継続ターン数が0の場合、状態異常を解除する
-		for (Chr c : orderList) {
+		for (Chr c : allList) {
 			IO.recoverFromAbnormalStatus(c);
 		}
 		

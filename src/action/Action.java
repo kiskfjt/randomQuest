@@ -10,6 +10,7 @@ public abstract class Action {
 	public static final double DEF_NEXT_DEFAULT_VALUE = 1.0;
 	public static final double RANGE_MIN_DEFAULT_VALUE = 0.8;
 	public static final double RANGE_MAX_DEFAULT_VALUE = 1.2;
+	public static final int SUCCESS_RATE_DEFAULT = 100;
 	
 	private final int MISS_RATE_DEFAULT = 5;
 	private final int CRITICAL_RATE_DEFAULT = 5;

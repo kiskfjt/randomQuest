@@ -16,7 +16,7 @@ public class ActionSkillSeikenzuki extends ActionSkill {
 	
 	// 攻撃範囲：敵単体
 	public boolean playerTarget() {
-		return IO.selectSingleTarget(me.party.enemy.member, me);
+		return IO.selectSingleAliveTarget(me.party.enemy.member, me);
 	}
 	
 	// ダメージ：物理、掛け算方式、命中率80%

@@ -23,11 +23,14 @@ public class ActionSkillDazzleFlash extends ActionSkill {
 
 	// 効果：敵を1ターン行動不能にさせる
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは身体中から%sを放った！】", me.name, name);
 		
 		for (Chr chr : me.targets) {
 			if (IO.probability(probability)) {
+				IO.msgln("%sは目が眩んだ！", chr.name);
 				chr.action = new ActionEffectBlind(chr);
+			} else {
+				IO.msgln("%sは目を閉じてかわした！", chr.name);
 			}
 		}
 		

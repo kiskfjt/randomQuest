@@ -5,9 +5,9 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionSkillShippu extends ActionSkill {
+public class ActionSkillShippuzuki extends ActionSkill {
 
-	public ActionSkillShippu(Chr me) {
+	public ActionSkillShippuzuki(Chr me) {
 		super(me);
 		name = "しっぷう突き";
 		multi = 40;

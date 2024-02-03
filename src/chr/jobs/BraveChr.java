@@ -6,7 +6,10 @@ import action.ActionBasicAttack;
 import action.ActionBasicGuard;
 import action.ActionEquipment;
 import action.ActionItem;
+import action.magics.ActionMagicGigaLightning;
 import action.magics.ActionMagicInvincible;
+import action.magics.ActionMagicLightning;
+import action.magics.ActionMagicLightningStorm;
 import action.skills.ActionSkillDisruptiveWave;
 import action.skills.ActionSkillGigaSlash;
 import action.skills.ActionSkillMeditation;
@@ -30,10 +33,13 @@ public class BraveChr extends Chr {
 		actions.add(new ActionItem(this));
 		actions.add(new ActionEquipment(this));
 		// actions.add(new ActionSkillMawashigeri(this));
+		actions.add(new ActionMagicLightning(this));
 		actions.add(new ActionSkillMeditation(this));
 		actions.add(new ActionMagicInvincible(this));
 		actions.add(new ActionSkillDisruptiveWave(this));
 		actions.add(new ActionSkillGigaSlash(this));
+		actions.add(new ActionMagicLightningStorm(this));
+		actions.add(new ActionMagicGigaLightning(this));
 		
 		setToNPC();
 	}

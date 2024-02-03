@@ -1,5 +1,6 @@
 package equipment;
 
+import action.Action;
 import chr.Chr;
 import item.Item;
 
@@ -7,6 +8,9 @@ public abstract class Equipment extends Item {
 	
 	public Equipment(Chr me) {
 		super(me);
+		multi = Action.MULTI_DEFAULT_VALUE;
+		rangeMin = Action.RANGE_MIN_DEFAULT_VALUE;
+		rangeMax = Action.RANGE_MAX_DEFAULT_VALUE;
 		addStatus();
 	}
 	

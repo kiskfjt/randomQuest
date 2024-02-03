@@ -22,7 +22,7 @@ public class ActionMagicHealingCircle extends ActionMagic {
 
 	// 回復量：80～100の範囲
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 		
 		Calc.multiHeal(me, this);
 		

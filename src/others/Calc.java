@@ -66,7 +66,11 @@ public class Calc {
 		int Dmg = physSingleDmg(me, me.targets.get(0));
 		int kickbackDmg = (int) (Dmg * kickback);
 		me.HP -= kickbackDmg;
-		IO.msgln("%sは%dの反動ダメージをうけた！", me.name, kickbackDmg);
+		
+		if (kickbackDmg > 0) {
+			IO.msgln("%sは%dの反動ダメージをうけた！", me.name, kickbackDmg);
+		}
+		
 		IO.judgeHP(me.targets.get(0), me);
 	}
 	
@@ -314,7 +318,7 @@ public class Calc {
 		String buffName = "";
 		
 		if (buffNo == Action.BUFF_ATK) {
-			if (target.canLowerATK) {
+			if (target.canLowerATK || (!target.canLowerATK && buffValue >= 0)) {
 				beforeBuff = target.ATK;
 				buff = (int) (target.baseATK * buffValue);
 				target.ATK += buff;
@@ -328,7 +332,7 @@ public class Calc {
 				buffName = "ATK";
 			}
 		} else if (buffNo == Action.BUFF_DEF) {
-			if (target.canLowerDEF) {
+			if (target.canLowerDEF || (!target.canLowerDEF && buffValue >= 0)) {
 				beforeBuff = target.DEF;
 				buff = (int) (target.baseDEF * buffValue);
 				target.DEF += buff;
@@ -342,7 +346,7 @@ public class Calc {
 				buffName = "DEF";
 			}
 		} else if (buffNo == Action.BUFF_MAT) {
-			if (target.canLowerMAT) {
+			if (target.canLowerMAT || (!target.canLowerMAT && buffValue >= 0)) {
 				beforeBuff = target.MAT;
 				buff = (int) (target.baseMAT * buffValue);
 				target.MAT += buff;
@@ -356,7 +360,7 @@ public class Calc {
 				buffName = "MAT";
 			}
 		} else if (buffNo == Action.BUFF_MDF) {
-			if (target.canLowerMDF) {
+			if (target.canLowerMDF || (!target.canLowerMDF && buffValue >= 0)) {
 				beforeBuff = target.MDF;
 				buff = (int) (target.baseMDF * buffValue);
 				target.MDF += buff;
@@ -370,7 +374,7 @@ public class Calc {
 				buffName = "MDF";
 			}
 		} else if (buffNo == Action.BUFF_SPD) {
-			if (target.canLowerSPD) {
+			if (target.canLowerSPD || (!target.canLowerSPD && buffValue >= 0)) {
 				beforeBuff = target.SPD;
 				buff = (int) (target.baseSPD * buffValue);
 				target.SPD += buff;
@@ -421,8 +425,13 @@ public class Calc {
 	public static void revive(Chr target, Chr me) {
 		boolean isRevived = IO.probability(me.action.successRate);
 		
+		int count = 0;
+		
 		if (target.HP > 0) {
-			IO.msgln("しかし何も起こらなかった！");
+			count++;
+			if (count == me.party.member.size()) {
+				IO.msgln("しかし何も起こらなかった！");
+			}
 		} else if (target.HP == 0 && isRevived) {
 			target.HP = (int) (target.maxHP * IO.randomNum(me.action.rangeMin, me.action.rangeMax));
 			IO.msgln("%sは生き返った！", target.name);
@@ -446,8 +455,8 @@ public class Calc {
 	 * @param me
 	 */
 	public static void multiRevive(Chr me) {
-		for (Chr chr : me.targets) {
-			revive(chr);
+		for (Chr target : me.targets) {
+			revive(target, me);
 		}
 	}
 	

@@ -9,7 +9,7 @@ import action.skills.ActionSkillKiaitame;
 import action.skills.ActionSkillMajingiri;
 import action.skills.ActionSkillMinagoroshi;
 import action.skills.ActionSkillMorobagiri;
-import action.skills.ActionSkillShippu;
+import action.skills.ActionSkillShippuzuki;
 import chr.Chr;
 
 public class WarriorChr extends Chr {
@@ -26,7 +26,7 @@ public class WarriorChr extends Chr {
 		actions.add(new ActionSkillKiaitame(this));
 		actions.add(new ActionSkillMorobagiri(this));
 		actions.add(new ActionSkillMinagoroshi(this));
-		actions.add(new ActionSkillShippu(this));
+		actions.add(new ActionSkillShippuzuki(this));
 		actions.add(new ActionSkillHayabusagiri(this));
 		actions.add(new ActionSkillMajingiri(this));
 	}

@@ -32,6 +32,7 @@ public abstract class Chr {
 	// スキルや魔法、アイテムによる状態変化の定数
 	public final int STATUS_INVINCIBLE = 20;
 	public final int STATUS_SING = 21;
+	public final int STATUS_SKIP = 99;
 	
 	
 	

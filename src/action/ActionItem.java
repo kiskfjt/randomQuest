@@ -7,9 +7,10 @@ public class ActionItem extends Action {
 	public ActionItem(Chr me) {
 		super(me);
 		name = "どうぐ";
-		rangeMin = me.item == null ? RANGE_MIN_DEFAULT_VALUE : me.item.rangeMin;
-		rangeMax = me.item == null ? RANGE_MAX_DEFAULT_VALUE : me.item.rangeMax;
-		multi = me.item == null ? MULTI_DEFAULT_VALUE : me.item.multi;
+		rangeMin = me.item == null ? Action.RANGE_MIN_DEFAULT_VALUE : me.item.rangeMin;
+		rangeMax = me.item == null ? Action.RANGE_MAX_DEFAULT_VALUE : me.item.rangeMax;
+		multi = me.item == null ? Action.MULTI_DEFAULT_VALUE : me.item.multi;
+		successRate = me.item == null ? Action.SUCCESS_RATE_DEFAULT : me.item.successRate;
 	}
 	
 	/**

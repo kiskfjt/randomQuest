@@ -22,7 +22,7 @@ public class ActionMagicProtection extends ActionMagic {
 	
 	// 防御バフ：baseDEFの35%アップ
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 		
 		Calc.singleBuff(me, buffNo, buffValue);
 		

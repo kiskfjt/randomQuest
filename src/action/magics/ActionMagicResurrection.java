@@ -5,26 +5,26 @@ import chr.Chr;
 import others.Calc;
 import others.IO;
 
-public class ActionMagicRevive extends ActionMagic {
+public class ActionMagicResurrection extends ActionMagic {
 
-	public ActionMagicRevive(Chr me) {
+	public ActionMagicResurrection(Chr me) {
 		super(me);
-		name = "リバイブ";
-		MPCons = 20;
-		rangeMin = 0.4;
-		rangeMax = 0.6;
-		successRate = 50;
+		name = "リザレクション";
+		MPCons = 40;
+		rangeMin = 1.0;
+		rangeMax = 1.0;
+		successRate = 100;
 	}
-	
+
 	// 対象：味方単体
 	public boolean playerTarget() {
 		return IO.selectSingleTarget(me.party.member, me);
 	}
 
-	// 蘇生時のHP40～60%
+	// 効果：HP全快で復活
 	public void execute() {
 		IO.msgln("【%sは%sを唱えた！】", me.name, name);
-
+		
 		Calc.revive(me);
 		
 		Calc.subtractMPConsIfTargetIsDead(me, MPCons);

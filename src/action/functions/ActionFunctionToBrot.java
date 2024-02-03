@@ -5,7 +5,7 @@ import action.magics.ActionMagicBreakShield;
 import action.skills.ActionSkillFireBreath;
 import action.skills.ActionSkillKiaitame;
 import action.skills.ActionSkillMawashigeri;
-import action.skills.ActionSkillShippu;
+import action.skills.ActionSkillShippuzuki;
 import chr.Chr;
 import chr.bosses.BossMortamor2nd;
 import others.IO;
@@ -18,7 +18,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 	
 	private final int A_KIAITAME = 0;
 	private final int A_BREAK_SHIELD = 1;
-	private final int A_SHIPPU = 2;
+	private final int A_SHIPPUZUKI = 2;
 	private final int A_MAWASHIGERI = 3;
 	private final int A_FIREBREATH = 4;
 	private final int A_TO_AROT = 5;
@@ -34,7 +34,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 		// Bローテのアクション追加
 		me.actions.add(new ActionSkillKiaitame(me));
 		me.actions.add(new ActionMagicBreakShield(me));
-		me.actions.add(new ActionSkillShippu(me));
+		me.actions.add(new ActionSkillShippuzuki(me));
 		me.actions.add(new ActionSkillMawashigeri(me));
 		me.actions.add(new ActionSkillFireBreath(me));
 		me.actions.add(new ActionFunctionToArot(me));
@@ -51,7 +51,7 @@ public class ActionFunctionToBrot extends ActionFunction {
 		me.command = me::nonPlayerCommand;
 		me.actions.get(A_KIAITAME).target = this::kiaitameTarget;
 		me.actions.get(A_BREAK_SHIELD).target = this::breakShieldTarget;
-		me.actions.get(A_SHIPPU).target = this::shippuTarget;
+		me.actions.get(A_SHIPPUZUKI).target = this::shippuzukiTarget;
 		me.actions.get(A_MAWASHIGERI).target = this::mawashigeriTarget;
 		me.actions.get(A_FIREBREATH).target = this::fireBreathTarget;
 		me.actions.get(A_TO_AROT).target = this::toArotTarget;
@@ -83,8 +83,8 @@ public class ActionFunctionToBrot extends ActionFunction {
 		return IO.selectAllTargets(me.party.enemy.member, me);
 	}
 	
-	public boolean shippuTarget() {
-		
+	public boolean shippuzukiTarget() {
+		me.SPDNext = me.MAX_SPD;
 		return IO.selectSingleRandomTarget(me.party.enemy.member, me);
 	}
 	

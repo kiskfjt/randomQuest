@@ -7,9 +7,9 @@ public class ActionEquipment extends Action {
 	public ActionEquipment(Chr me) {
 		super(me);
 		name = "そうび";
-		rangeMin = me.equipment == null ? RANGE_MIN_DEFAULT_VALUE : me.equipment.rangeMin;
-		rangeMax = me.equipment == null ? RANGE_MAX_DEFAULT_VALUE : me.equipment.rangeMax;
-		multi = me.equipment == null ? MULTI_DEFAULT_VALUE : me.equipment.multi;
+		rangeMin = me.equipment == null ? Action.RANGE_MIN_DEFAULT_VALUE : me.equipment.rangeMin;
+		rangeMax = me.equipment == null ? Action.RANGE_MAX_DEFAULT_VALUE : me.equipment.rangeMax;
+		multi = me.equipment == null ? Action.MULTI_DEFAULT_VALUE : me.equipment.multi;
 	}
 	/**
 	 * 装備クラスのターゲット選択メソッドを実行する

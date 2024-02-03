@@ -123,18 +123,18 @@ public class BossMortamor2nd extends Chr {
 	
 	public boolean hardDefenseTarget() {
 		this.DEFNext = actions.get(A_HARD_DEFENSE).multi;
-		targets.clear();
+		this.targets.clear();
 		return true;
 	}
 	
 	public boolean toBrotTarget() {
-		targets.clear();
+		this.targets.clear();
 		return true;
 	}
 	
 	// Bローテのターゲット選択メソッド
 	public boolean kiaitameTarget() {
-		targets.clear();
+		this.targets.clear();
 		return true;
 	}
 	
@@ -142,7 +142,7 @@ public class BossMortamor2nd extends Chr {
 		return IO.selectAllTargets(this.party.enemy.member, this);
 	}
 	
-	public boolean shippuTarget() {
+	public boolean shippuzukiTarget() {
 		this.SPDNext = this.MAX_SPD;
 		return IO.selectSingleRandomTarget(this.party.enemy.member, this);
 	}

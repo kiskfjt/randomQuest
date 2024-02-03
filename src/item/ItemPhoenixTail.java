@@ -11,10 +11,8 @@ public class ItemPhoenixTail extends Item {
 		name = "フェニックスの尾";
 		rangeMin = 0.4;
 		rangeMax = 0.6;
+		successRate = 50;
 	}
-	
-	// 蘇生の確率（%）
-	private int probability = 100;
 	
 	public boolean playerTarget() {
 		return IO.selectSingleDead(me.party.member, me);
@@ -23,7 +21,7 @@ public class ItemPhoenixTail extends Item {
 	public void execute() {
 		IO.msgln("【%sは%sをつかった！】", me.name, name);
 
-		Calc.revive(me, rangeMin, rangeMax, probability);
+		Calc.revive(me);
 		
 		// 対象が死んでいたらこのインスタンスをitemリストから削除
 		if (IO.isTargetDead(me)) {

@@ -30,6 +30,7 @@ public class ActionMagicSongOfNymph extends ActionMagic {
 	}
 
 	// 効果：味方全員の蘇生、失敗有り
+	// 次のターンまで歌を歌い続け、次のターンで味方を蘇生する
 	public void execute() {
 		if (me.statusTurn == this.statusTurn) {
 			IO.msgln("【%sの%s！】", me.name, name);

@@ -58,72 +58,76 @@ public class IO {
 	private static final double MAGIC_RESISTANCE_MAX = 1.5;
 
 	public static void printStatus(ArrayList<Chr> member) {
-		msgln("***********************************");
+		msgln("*******************************************************");
 		msg("%3s", "");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%4s", member.get(i).name);
+			msg("%7s", member.get(i).name);
 		}
 		ln();
 		msg("%3s", "HP");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).HP, member.get(i).maxHP);
+			msg("%6d/%3d", member.get(i).HP, member.get(i).maxHP);
 		}
 		ln();
 		msg("%3s", "MP");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).MP, member.get(i).maxMP);
+			msg("%6d/%3d", member.get(i).MP, member.get(i).maxMP);
 		}
 		ln();
 		msg("%3s", "ATK");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).ATK, member.get(i).baseATK);
+			msg("%6d/%3d", member.get(i).ATK, member.get(i).baseATK);
 		}
 		ln();
 		msg("%3s", "DEF");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).DEF, member.get(i).baseDEF);
+			msg("%6d/%3d", member.get(i).DEF, member.get(i).baseDEF);
 		}
 		ln();
 		msg("%3s", "MAT");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).MAT, member.get(i).baseMAT);
+			msg("%6d/%3d", member.get(i).MAT, member.get(i).baseMAT);
 		}
 		ln();
 		msg("%3s", "MDF");
 		for (int i = 0; i < member.size(); i++) {
 			msg("%3s", "");
-			msg("%3d/%3d", member.get(i).MDF, member.get(i).baseMDF);
+			msg("%6d/%3d", member.get(i).MDF, member.get(i).baseMDF);
 		}
-		//System.out.println();
-		//System.out.printf("%3s", "SPD");
+		ln();
+		msg("%3s", "SPD");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%3s", "");
+			msg("%6d/%3d", member.get(i).SPD, member.get(i).baseSPD);
+		}
 		ln();
 		msg("%3s", "JOB");
 		msg("%3s", "");
 		for (int i = 0; i < member.size(); i++) {
-			msg("%4s", member.get(i).jobName);
-			msg("%2s", "");
+			msg("%7s", member.get(i).jobName);
+			msg("%1s", "");
 		}
 		ln();
 		msg("%3s", "Lv");
 		msg("%5s", "");
 		for (int i = 0; i < member.size(); i++) {
 			if (member.get(i).status == 0) {
-				msg("%3s", member.get(i).Lv);
+				msg("%6s", member.get(i).Lv);
 				msg("%7s", "");
 			} else {
-				msg("%3s", member.get(i).statusStr);
+				msg("%6s", member.get(i).statusStr);
 				msg("%7s", "");
 			}
 		}
 
 		System.out.println();
-		System.out.println("***********************************");
+		System.out.println("*******************************************************");
 	}
 
 	public static boolean selectPCAction(Chr me) {
@@ -680,11 +684,6 @@ public class IO {
 				msgln("%sはじゅもんが使えない！", me.name);
 			}
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_SING) {
-			me.statusTurn--;
-			if (me.statusTurn == 0) {
-				me.action.execute();
-			}
 		}
 		return cantMove;
 	}
@@ -706,7 +705,7 @@ public class IO {
 			msgln("%sは%dの猛毒のダメージを受けた！", me.name, dmg);
 			judgeHP(me.party.enemy.member.get(0), me);
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_INVINCIBLE) {
+		} else if (me.status == me.STATUS_SING) {
 			me.statusTurn--;
 		}
 	}
@@ -731,8 +730,14 @@ public class IO {
 				msgln("%sは喋れるようになった！", me.name);
 			} else if (me.status == me.STATUS_INVINCIBLE) {
 				msgln("%sの鋼鉄化がとけた！", me.name);
+			} else if (me.status == me.STATUS_SKIP) {
+				me.status = me.STATUS_NOMAL;
+				return;
+			} else if (me.status == me.STATUS_SING) {
+				return;
 			}
 			me.status = me.STATUS_NOMAL;
+			IO.enter();
 		}
 	}
 	
@@ -756,6 +761,11 @@ public class IO {
 		// 歌ってるときはスキップ
 		if (chr.status == chr.STATUS_SING) {
 			return true;
+		// 鋼鉄化のときはスキップ
+		} else if (chr.status == chr.STATUS_INVINCIBLE) {
+			return true;
+		} else if (chr.status == chr.STATUS_SKIP) {
+			return true;
 		}
 		
 		return false;
@@ -777,6 +787,29 @@ public class IO {
 		for (Chr chr : me.targets) {
 			clearSingleAction(chr);
 		}
+	}
+	
+	/**
+	 * 自分以外のactionをnullにして行動しないようにするメソッド
+	 * @param me
+	 */
+	public static void clearAllActionsExceptMe(Chr me) {
+		for (Chr chr : listExcludeMe(me)) {
+			clearSingleAction(chr);
+		}
+	}
+	
+	/**
+	 * 自分を除いた味方パーティーのリストを返すメソッド
+	 * @param me
+	 * @return
+	 */
+	public static ArrayList<Chr> listExcludeMe(Chr me) {
+		ArrayList<Chr> listExcludeMe = new ArrayList<>(me.party.member);
+		// 味方パーティーリストからmeを削除
+		listExcludeMe.remove(listExcludeMe.indexOf(me));
+		
+		return listExcludeMe;
 	}
 	
 	/**

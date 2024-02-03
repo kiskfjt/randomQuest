@@ -17,12 +17,12 @@ public class ActionMagicBreakShield extends ActionMagic {
 	
 	// デバフ対象：敵全体
 	public boolean playerTarget() {
-		return IO.selectSingleAliveTarget(me.party.member, me);
+		return IO.selectSingleAliveTarget(me.party.enemy.member, me);
 	}
 
 	// 防御デバフ：baseDEFの50%ダウン
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 
 		Calc.multiBuff(me, buffNo, buffValue);
 		

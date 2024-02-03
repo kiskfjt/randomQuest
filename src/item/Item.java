@@ -17,6 +17,7 @@ public abstract class Item {
 	public Runnable target;
 	public Runnable execute;
 	public String name;
+	public int successRate;
 	
 	// 攻撃の倍率
 	public double multi;

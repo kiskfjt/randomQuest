@@ -21,7 +21,7 @@ public class ActionMagicDetoxify extends ActionMagic {
 
 	@Override
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 
 		IO.clearStatus(me, clearStatusNo);
 
