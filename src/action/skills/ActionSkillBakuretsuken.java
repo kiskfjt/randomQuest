@@ -23,6 +23,8 @@ public class ActionSkillBakuretsuken extends ActionSkill {
 
 	// ダメージ：物理、掛け算方式
 	public void execute() {
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		IO.msgln("【%sの%s！】", me.name, name);
 
 		Calc.physMultiDmg(me);

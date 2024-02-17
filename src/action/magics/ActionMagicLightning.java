@@ -21,6 +21,7 @@ public class ActionMagicLightning extends ActionMagic {
 
 	// ダメージ：魔法、掛け算方式
 	public void execute() {
+		
 		IO.msgln("【%sは%sを呼び寄せた！】", me.name, name);
 		
 		Calc.mgcMultiDmg(me);

@@ -18,6 +18,9 @@ public abstract class Chr {
 	private final int ACTION_TURN_DEFAULT = 1;
 	public static final int STATUS_TURN_DEFAULT = 0;
 	private final double MAGIC_RESISTANCE_DEFAULT = 1.0;
+	public final int EVASION_RATE_DEFAULT = 0;
+	private final int EVASION_TURN_DEFAULT = 0;
+	public final boolean COP_OUT_DEFAULT = false;
 	private final boolean RESISTANCE_DEFAULT = true;
 	
 	// 状態異常の定数
@@ -29,10 +32,22 @@ public abstract class Chr {
 	public final int STATUS_CONFUSED = 5;
 	public final int STATUS_SILENT = 6;
 	
+	// 状態異常の名前
+	public final String STATUS_STR_POISONED = "どく";
+	public final String STATUS_STR_DEADLY_POISONED = "もうどく";
+	public final String STATUS_STR_PARALYZED = "まひ";
+	public final String STATUS_STR_ASLEEP = "眠り";
+	public final String STATUS_STR_CONFUSED = "混乱";
+	public final String STATUS_STR_SILENT = "沈黙";
+	
 	// スキルや魔法、アイテムによる状態変化の定数
 	public final int STATUS_INVINCIBLE = 20;
 	public final int STATUS_SING = 21;
-	public final int STATUS_SKIP = 99;
+	public final int STATUS_SKIP = 50;
+	
+	public final int STATUS_DEAD = 99;
+	public final String STATUS_STR_DEAD = "しに";
+	
 	
 	
 	
@@ -78,6 +93,9 @@ public abstract class Chr {
 	public int statusTurn;
 	public String statusStr;
 	public double magicResistance;
+	public int evasionRate;
+	public int evasionTurn;
+	public boolean copOut;
 	
 	// 耐性関連
 	public boolean canLowerATK;
@@ -86,6 +104,13 @@ public abstract class Chr {
 	public boolean canLowerMDF;
 	public boolean canLowerSPD;
 	public boolean canLowerMagicResistance;
+	
+	// 状態異常耐性
+	public boolean canBePoisoned;
+	public boolean canBeParalyzed;
+	public boolean canBeAsleep;
+	public boolean canBeConfused;
+	public boolean canBeSilent;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -149,6 +174,9 @@ public abstract class Chr {
 		statusTurn = STATUS_TURN_DEFAULT;
 		statusStr = "";
 		magicResistance = MAGIC_RESISTANCE_DEFAULT;
+		evasionRate = EVASION_RATE_DEFAULT;
+		evasionTurn = EVASION_TURN_DEFAULT;
+		copOut = COP_OUT_DEFAULT;
 		
 		// 耐性関連
 		canLowerATK = RESISTANCE_DEFAULT;
@@ -156,8 +184,14 @@ public abstract class Chr {
 		canLowerMAT = RESISTANCE_DEFAULT;
 		canLowerMDF = RESISTANCE_DEFAULT;
 		canLowerSPD = RESISTANCE_DEFAULT;
-		
 		canLowerMagicResistance = RESISTANCE_DEFAULT;
+		
+		// 状態異常耐性関連
+		canBePoisoned = RESISTANCE_DEFAULT;
+		canBeParalyzed = RESISTANCE_DEFAULT;
+		canBeAsleep = RESISTANCE_DEFAULT;
+		canBeConfused = RESISTANCE_DEFAULT;
+		canBeSilent = RESISTANCE_DEFAULT;
 	}
 	
 	public Chr() {

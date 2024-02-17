@@ -74,10 +74,9 @@ public class Battle {
 			// 行動実行
 			int result = execute(orderList, allList);
 			
-			
-			// ゲーム継続判定
 			IO.ln();
 			
+			// ゲーム継続判定
 			switch (result) {
 			case RESULT_NOTYET:
 				break;
@@ -273,6 +272,11 @@ public class Battle {
 		// 全員の行動が終わった後に状態異常の継続ターン数が0の場合、状態異常を解除する
 		for (Chr c : allList) {
 			IO.recoverFromAbnormalStatus(c);
+		}
+		
+		// 全員の行動が終わった後に状態異常以外の継続ターンを1減らす
+		for (Chr c : allList) {
+			IO.decrementEffectTurns(c);
 		}
 		
 		return RESULT_NOTYET;

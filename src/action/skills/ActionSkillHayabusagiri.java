@@ -23,6 +23,8 @@ public class ActionSkillHayabusagiri extends ActionSkill {
 
 	// ダメージ：物理、掛け算方式、2連続攻撃
 	public void execute() {
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		IO.msgln("【%sの%s！】", me.name, name);
 		
 		Calc.physSingleDmg(me);

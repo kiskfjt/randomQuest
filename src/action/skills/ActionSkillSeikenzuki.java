@@ -21,6 +21,8 @@ public class ActionSkillSeikenzuki extends ActionSkill {
 	
 	// ダメージ：物理、掛け算方式、命中率80%
 	public void execute() {
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		IO.msgln("【%sの%s！】", me.name, name);
 		IO.msgln("%sはこしをふかくおとし、まっすぐにあいてをついた！", me.name);
 		

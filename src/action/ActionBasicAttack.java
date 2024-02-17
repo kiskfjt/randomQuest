@@ -21,6 +21,8 @@ public class ActionBasicAttack extends ActionBasic {
 	}
 	
 	public void execute() {
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		IO.msgln("【%sの%s！】", me.name, name);
 		
 		Calc.physSingleDmg(me);

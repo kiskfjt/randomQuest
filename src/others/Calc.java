@@ -6,7 +6,10 @@ import chr.Party;
 import item.Item;
 
 public class Calc {
+	// クリティカル時の倍率
 	private static final int CRITICAL_MULTI = 2;
+	// 回避率の最大値
+	private static final int EVASION_MAX_RATE = 100;
 	
 	public static int physSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
@@ -15,8 +18,16 @@ public class Calc {
 			   / target.DEF / target.DEFNext;
 		Dmg = (int) dDmg;
 		
-		// 確率判定
-		if (IO.probability(me.action.missRate)) {
+		// 受け流し判定
+		target = IO.changeTarget(me, target);
+		
+		// 回避率
+		int evasionRate = me.action.missRate + target.evasionRate;
+		if (evasionRate > EVASION_MAX_RATE) {
+			evasionRate = EVASION_MAX_RATE;
+		}
+		// 回避判定
+		if (IO.probability(evasionRate)) {
 			Dmg = 0;
 			IO.msgln("%sはひらりとかわした！", target.name);
 		} else {
@@ -24,11 +35,12 @@ public class Calc {
 			if (Dmg > 0 && IO.probability(me.action.criticalRate)) {
 				Dmg *= CRITICAL_MULTI;
 				if (me.party.pKind == Party.PARTY_KIND_ALLY) {
-					IO.msgln("<<かいしんのいちげき！>>");
+					IO.msgln("<<<かいしんのいちげき！>>>");
 				} else {
-					IO.msgln("<<つうこんのいちげき！>>");
+					IO.msgln("<<<つうこんのいちげき！>>>");
 				}
 			}
+			// ダメージがマイナスや9999を超えた時の処理
 			if (Dmg < 0) {
 				Dmg = 0;
 			} else if (Dmg > Chr.MAX_HP) {
@@ -76,9 +88,7 @@ public class Calc {
 	
 	public static void physMultiDmg(Chr me) {
 		for (Chr c : me.targets) {
-			if (c.isDead()) {
-				System.out.println(c.name + "はしんでいる！");
-			} else if (c.isAlive()) {
+			if (c.isAlive()) {
 				physSingleDmg(me, c);
 			}
 		}
@@ -139,6 +149,12 @@ public class Calc {
 		return physRangeSingleDmg(me, me.targets.get(0));
 	}
 	
+	/**
+	 * 魔法単体ダメージ計算メソッド
+	 * ダメージ計算を行っているのがこれ
+	 * @param me
+	 * @param target
+	 */
 	public static void mgcSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
 		int Dmg = 0;
@@ -149,15 +165,23 @@ public class Calc {
 		judgeProbabilityAndFixDmg(me, target, Dmg);
 	}
 	
+	/**
+	 * 魔法単体ダメージ計算メソッド
+	 * 引数1つのこのメソッドで基本的に処理を受け付ける
+	 * @param me
+	 */
 	public static void mgcSingleDmg(Chr me) {
 		mgcSingleDmg(me, me.targets.get(0));
 	}
 	
+	/**
+	 * 魔法複数ダメージ計算メソッド
+	 * 単体魔法ダメージ計算メソッドを利用している
+	 * @param me
+	 */
 	public static void mgcMultiDmg(Chr me) {
 		for (Chr c : me.targets) {
-			if (c.isDead()) {
-				System.out.println(c.name + "はしんでいる！");
-			} else if (c.isAlive()) {
+			if (c.isAlive()) {
 				mgcSingleDmg(me, c);
 			}
 		}
@@ -434,6 +458,7 @@ public class Calc {
 			}
 		} else if (target.HP == 0 && isRevived) {
 			target.HP = (int) (target.maxHP * IO.randomNum(me.action.rangeMin, me.action.rangeMax));
+			target.status = target.STATUS_NOMAL;
 			IO.msgln("%sは生き返った！", target.name);
 		} else {
 			IO.msgln("しかし%sは生き返らなかった！", target.name);

@@ -11,6 +11,7 @@ import action.ActionEquipment;
 import action.ActionItem;
 import action.ActionMagic;
 import action.ActionSkill;
+import action.skills.ActionSkillCopOut;
 import chr.Chr;
 import chr.Party;
 import equipment.Equipment;
@@ -436,6 +437,25 @@ public class IO {
 		return true;
 	}
 	
+	/**
+	 * ランダム単体選択メソッド
+	 * ランダムなChrを返す
+	 * @param targetList
+	 * @param me
+	 * @return
+	 */
+	public static Chr returnSingleRandomTarget(ArrayList<Chr> targetList, Chr me) {
+		Chr targetChr = null;
+		
+		while (true) {
+			int targetNum = randomNum(targetList.size() - 1);
+			targetChr = targetList.get(targetNum);
+			if (targetChr.isAlive()) {
+				break;
+			}
+		}
+		return targetChr;
+	} 
 	
 	public static boolean selectMultiRandomTargets(ArrayList<Chr> targetList, Chr me, int numOfTimes) {
 		for (int i = 0; i < numOfTimes; i++) {
@@ -533,7 +553,8 @@ public class IO {
 	public static void judgeHP(Chr attacker, Chr defender) {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
-			defender.status = defender.STATUS_NOMAL;
+			defender.status = defender.STATUS_DEAD;
+			defender.statusStr = defender.STATUS_STR_DEAD;
 			if (defender.party.pKind == Party.PARTY_KIND_ENEMY) {
 				System.out.println(defender.name + "をたおした！");
 			} else {
@@ -579,28 +600,50 @@ public class IO {
 		return false;
 	}
 	
+	
+	public static void changeSingleStatus(Chr me, Chr target, int statusNo) {
+		if ((statusNo == target.STATUS_POISONED || statusNo == target.STATUS_DEADLY_POISONED) && target.canBePoisoned) {
+			
+		}
+	}
+	
+	/**
+	 * 複数ターゲット状態変更メソッド
+	 * 単体状態変更メソッドを繰り返して使用している
+	 * @param me
+	 * @param statusNo
+	 */
+	public static void changeMultiStatus(Chr me, int statusNo) {
+		for (Chr target : me.targets) {
+			if (target.isAlive()) {
+				changeSingleStatus(me, target, statusNo);
+				setStatus(target);
+			}
+		}
+	}
+	
 	/**
 	 * 状態異常になったときにメッセージを表示し、状態異常の継続ターンをセットする
 	 * @param me
 	 */
 	public static void setStatus(Chr me) {
 		if (me.status == me.STATUS_POISONED) {
-			me.statusStr = "どく";
+			me.statusStr = me.STATUS_STR_POISONED;
 			msgln("%sは毒におかされた！", me.name);
 		} else if (me.status == me.STATUS_DEADLY_POISONED) {
-			me.statusStr = "もうどく";
+			me.statusStr = me.STATUS_STR_DEADLY_POISONED;
 			msgln("%sは猛毒におかされた！", me.name);
 		} else if (me.status == me.STATUS_PARALYZED) {
-			me.statusStr = "まひ";
+			me.statusStr = me.STATUS_STR_PARALYZED;
 			msgln("%sは体がまひした！", me.name);
 		} else if (me.status == me.STATUS_ASLEEP) {
-			me.statusStr = "ねむり";
+			me.statusStr = me.STATUS_STR_ASLEEP;
 			msgln("%sは眠ってしまった！", me.name);
 		} else if (me.status == me.STATUS_CONFUSED) {
-			me.statusStr = "こんらん";
+			me.statusStr = me.STATUS_STR_CONFUSED;
 			msgln("%sは頭が混乱した！", me.name);
 		} else if (me.status == me.STATUS_SILENT) {
-			me.statusStr = "ちんもく";
+			me.statusStr = me.STATUS_STR_SILENT;
 			msgln("%sは沈黙状態になった！", me.name);
 		}
 		
@@ -771,6 +814,19 @@ public class IO {
 		return false;
 	}
 	
+	public static void decrementEffectTurns(Chr chr) {
+		// 回避率とそのターン数が0より大きいとき
+		if (chr.evasionRate > 0 && chr.evasionTurn > 0) {
+			chr.evasionTurn--;
+			if (chr.evasionTurn == 0) {
+				chr.evasionRate = chr.EVASION_RATE_DEFAULT;
+			}
+		// うけながしがtrueのとき、falseに戻す
+		} else if (chr.copOut) {
+			chr.copOut = chr.COP_OUT_DEFAULT;
+		}
+	}
+	
 	/**
 	 * 1人のactionをnullにして行動しないようにするメソッド
 	 * @param chr
@@ -813,6 +869,16 @@ public class IO {
 	}
 	
 	/**
+	 * ターゲットが死んでいるときに再度ランダムにターゲット選択するメソッド
+	 * @param targets
+	 * @param me
+	 */
+	public static void changeTargetsRandomlyIfDead(ArrayList<Chr> targets, Chr me) {
+		me.targets.stream().filter(target -> target.isDead())
+				.forEach(target -> target = returnSingleRandomTarget(targets, me));
+	}
+	
+	/**
 	 * 対象単体の魔法効果解除メソッド
 	 * @param chr
 	 */
@@ -832,10 +898,13 @@ public class IO {
 		for (Chr chr : me.targets) {
 			clearSingleMagicEffect(chr);
 		}
-		IO.msgln("%sたちの全ての魔法の効き目がなくなった！", me.targets.get(0).name);
+		IO.msgln("%sたちにかかっている全ての魔法効果がかき消された！", me.targets.get(0).name);
 	}
 	
-	
+	/**
+	 * 魔法耐性変更メソッド
+	 * @param me
+	 */
 	public static void changeMagicResistance(Chr me) {
 		for (Chr target : me.targets) {
 			if (target.canLowerMagicResistance) {
@@ -868,6 +937,35 @@ public class IO {
 				IO.msgln("%sには効果がないようだ", target.name);
 			}
 		}
+	}
+	
+	public static Chr changeTarget(Chr me, Chr target) {
+		Chr beforeTarget = target;
+		// ターゲットが受け流しを使っているときはtrue
+		if (target.copOut) {
+			ActionSkillCopOut targetAction = (ActionSkillCopOut) target.action;
+			int denominator = targetAction.denominator;
+			int toEnemy = targetAction.toEnemy;
+			int toAlly = targetAction.toAlly;
+			
+			// 敵に受け流すとき
+			if (probability(toEnemy, denominator)) {
+				me.targets.clear();
+				selectSingleRandomTarget(me.party.enemy.member, me);
+				target = me.targets.get(0);
+				msgln("%sは%sに受け流した！", beforeTarget.name, target.name);
+			// 味方に受け流すとき
+			} else if (probability(toAlly, denominator - toEnemy)) {
+				me.targets.clear();
+				selectSingleRandomTarget(listExcludeMe(me), me);
+				target = me.targets.get(0);
+				msgln("%sは%sに受け流した！", beforeTarget.name, target.name);
+			// 受け流し失敗時
+			} else {
+				msgln("%sは受け流し損ねた！", target.name);
+			}
+		}
+		return target;
 	}
 	
 	/**
@@ -979,6 +1077,22 @@ public class IO {
 	 */
 	public static boolean probability(int p) {
 		int random = randomNum(1, 100);
+		if (random <= p) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * 確率判定メソッド
+	 * p/maxの確率でtrueを返す
+	 * @param p
+	 * @param max
+	 * @return
+	 */
+	public static boolean probability(int p, int max) {
+		int random = randomNum(1, max);
 		if (random <= p) {
 			return true;
 		} else {

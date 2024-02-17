@@ -24,6 +24,8 @@ public class ActionSkillRush extends ActionSkill {
 	public void execute() {
 		IO.msgln("【%sの%s！】", me.name, name);
 		
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		Calc.physSingleDmg(me);
 	}
 }

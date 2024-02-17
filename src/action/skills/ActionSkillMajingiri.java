@@ -22,6 +22,8 @@ public class ActionSkillMajingiri extends ActionSkill {
 
 	// ダメージ：物理、掛け算方式、命中率33%、必ず会心
 	public void execute() {
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+		
 		IO.msgln("【%sの%s！】", me.name, name);
 		
 		Calc.physSingleDmg(me);

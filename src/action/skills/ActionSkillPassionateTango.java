@@ -2,7 +2,6 @@ package action.skills;
 
 import action.ActionSkill;
 import chr.Chr;
-import others.Calc;
 import others.IO;
 
 public class ActionSkillPassionateTango extends ActionSkill {
@@ -10,8 +9,8 @@ public class ActionSkillPassionateTango extends ActionSkill {
 	public ActionSkillPassionateTango(Chr me) {
 		super(me);
 		name = "情熱タンゴ";
-		rangeMinInt = 30;
-		rangeMaxInt = 50;
+		rangeMin = 0.8;
+		rangeMax = 1.2;
 	}
 
 	// 攻撃範囲：敵単体
@@ -21,13 +20,27 @@ public class ActionSkillPassionateTango extends ActionSkill {
 	
 	// ダメージ：物理、30～50の範囲
 	public void execute() {
-		IO.msgln("【%sの%s！】", me.name, name);
+		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
+
+		IO.msgln("【%sは%sを踊った！】", me.name, name);
 		
-		int dmg = Calc.physRangeSingleDmg(me);
+		Chr target = me.targets.get(0);
+		
+		int HPBefore = target.HP;
+		int value = (int) ((me.Lv / 4 + 5) * IO.randomNum(rangeMin, rangeMax));
+		target.HP -= value;
 
-		me.HP += dmg;
+		if (target.HP < 0) {
+			target.HP = 0;
+			value = HPBefore;
+		}
 
-		IO.msgln("%sのHPを%d吸収した！", me.targets.get(0).name, dmg);
+		me.HP += value;
+		
+		// 生死判定
+		IO.judgeHP(me, target);
+
+		IO.msgln("%sのHPを%d奪った！", target.name, value);
 	}
 
 }
