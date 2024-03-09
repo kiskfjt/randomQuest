@@ -11,6 +11,7 @@ public class ActionSkillPassionateTango extends ActionSkill {
 		name = "情熱タンゴ";
 		rangeMin = 0.8;
 		rangeMax = 1.2;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 攻撃範囲：敵単体

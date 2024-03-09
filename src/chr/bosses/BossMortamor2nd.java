@@ -52,8 +52,12 @@ public class BossMortamor2nd extends Chr {
 		this.canLowerMDF = false;
 		this.canLowerSPD = false;
 		this.canLowerMagicResistance = false;
+		this.canBeKilledInstantly = false;
 		
 		this.actionTurnDefault = A_TURN_DEFAULT;
+		
+		// キャラ属性
+		this.element = Chr.CHR_ELEMENT_NOMAL;
 		
 		setToNPC();
 	}

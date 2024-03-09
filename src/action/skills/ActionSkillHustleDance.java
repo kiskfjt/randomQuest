@@ -12,6 +12,7 @@ public class ActionSkillHustleDance extends ActionSkill {
 		name = "ハッスルダンス";
 		rangeMin = 110;
 		rangeMax = 140;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果対象：味方全体

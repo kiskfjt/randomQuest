@@ -11,6 +11,7 @@ public class ActionSkillWeirdDance extends ActionSkill {
 		name = "ふしぎなおどり";
 		rangeMin = 0.8;
 		rangeMax = 1.2;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果範囲：敵単体

@@ -9,9 +9,10 @@ public class ActionMagicGigaLightning extends ActionMagic {
 
 	public ActionMagicGigaLightning(Chr me) {
 		super(me);
-		name = "ミナデイン";
+		name = "ミナデリン";
 		multi = 250;
 		MPCons = 10;
+		missRate = 0;
 	}
 	
 	private final int statusTurn = 0;

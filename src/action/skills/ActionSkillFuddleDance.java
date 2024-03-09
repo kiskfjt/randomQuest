@@ -10,6 +10,7 @@ public class ActionSkillFuddleDance extends ActionSkill {
 		super(me);
 		name = "ベリーダンス";
 		successRate = 50;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果範囲：敵全体

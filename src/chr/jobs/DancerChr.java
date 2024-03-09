@@ -4,7 +4,9 @@ import action.ActionBasicAttack;
 import action.ActionBasicGuard;
 import action.ActionEquipment;
 import action.ActionItem;
+import action.skills.ActionSkillBanDance;
 import action.skills.ActionSkillCopOut;
+import action.skills.ActionSkillDeathDance;
 import action.skills.ActionSkillDodgeDance;
 import action.skills.ActionSkillFuddleDance;
 import action.skills.ActionSkillMysteryWaltz;
@@ -29,6 +31,8 @@ public class DancerChr extends Chr {
 		actions.add(new ActionSkillMysteryWaltz(this));
 		actions.add(new ActionSkillPassionateTango(this));
 		actions.add(new ActionSkillFuddleDance(this));
+		actions.add(new ActionSkillBanDance(this));
+		actions.add(new ActionSkillDeathDance(this));
 	}
 	
 	public boolean nonPlayerCommand() {

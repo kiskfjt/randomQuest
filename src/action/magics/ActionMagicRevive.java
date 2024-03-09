@@ -21,7 +21,7 @@ public class ActionMagicRevive extends ActionMagic {
 		return IO.selectSingleTarget(me.party.member, me);
 	}
 
-	// 蘇生時のHP40～60%
+	// 効果：蘇生時のHP40～60%
 	public void execute() {
 		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 

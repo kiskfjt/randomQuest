@@ -132,7 +132,7 @@ public class IO {
 	}
 
 	public static boolean selectPCAction(Chr me) {
-		sortActions(me.actions);
+		sortActions(me);
 		int step = 1;
 		int maxStep = 3;
 		boolean isSetPCAction = false;
@@ -142,7 +142,7 @@ public class IO {
 			case 0:
 				break loop;
 			case 1:
-				sortActions(me.actions);
+				sortActions(me);
 				if (selectMainAction(me)) {
 					step++;
 				} else {
@@ -173,7 +173,8 @@ public class IO {
 		return isSetPCAction;
 	}
 
-	public static void sortActions(ArrayList<Action> actions) {
+	public static void sortActions(Chr me) {
+		ArrayList<Action> actions = me.actions;
 		Action action = null;
 
 		attack = new ArrayList<>();
@@ -188,9 +189,9 @@ public class IO {
 			if (action instanceof ActionBasicAttack) {
 				attack.add(action);
 			} else if (action instanceof ActionSkill) {
-				skill.add(action);
+				addNomalAndSpecialAction(me, action, skill);
 			} else if (action instanceof ActionMagic) {
-				magic.add(action);
+				addNomalAndSpecialAction(me, action, magic);
 			} else if (action instanceof ActionItem) {
 				item.add(action);
 			} else if (action instanceof ActionBasicGuard) {
@@ -198,6 +199,20 @@ public class IO {
 			} else if (action instanceof ActionEquipment) {
 				equip.add(action);
 			}
+		}
+	}
+	
+	/**
+	 * 特別な特技・魔法は条件を満たした時にのみアクションリストに追加する
+	 * @param me
+	 * @param action
+	 * @param actList
+	 */
+	public static void addNomalAndSpecialAction(Chr me, Action action, ArrayList<Action> actList) {
+		if (action.specialAction == 0) {
+			actList.add(action);
+		} else if (action.specialAction == 1 && me.HP <= (int) (me.maxHP * action.actionSpecialHPCondition)) {
+			actList.add(action);
 		}
 	}
 
@@ -340,6 +355,64 @@ public class IO {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 攻撃側（me）と防御側（target）の属性の相性に応じて値を返すメソッド
+	 * 攻撃側から見て相性がいい場合は1，悪い場合は2，普通の場合は0を返す
+	 * @param me
+	 * @param target
+	 * @return
+	 */
+	public static int elementCompatibility(Chr me, Chr target) {
+		int actElement = me.action.element;
+		int tgtElement = target.element;
+		int compatibilityNomal = 0;
+		
+		if (actElement == Action.ACTION_ELEMENT_FIRE) {
+			if (tgtElement == Chr.CHR_ELEMENT_AIR) {
+				// 属性の相性が良いときは1を返す
+				return 1;
+			} else if (tgtElement == Chr.CHR_ELEMENT_WATER) {
+				// 属性の相性が悪いときは2を返す
+				return 2;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_WATER) {
+			if (tgtElement == Chr.CHR_ELEMENT_FIRE) {
+				return 1;
+			} else if (tgtElement == Chr.CHR_ELEMENT_THUNDER) {
+				return 2;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_THUNDER) {
+			if (tgtElement == Chr.CHR_ELEMENT_WATER) {
+				return 1;
+			} else if (tgtElement == Chr.CHR_ELEMENT_EARTH) {
+				return 2;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_EARTH) {
+			if (tgtElement == Chr.CHR_ELEMENT_THUNDER) {
+				return 1;
+			} else if (tgtElement == Chr.CHR_ELEMENT_AIR) {
+				return 2;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_AIR) {
+			if (tgtElement == Chr.CHR_ELEMENT_THUNDER) {
+				return 1;
+			} else if (tgtElement == Chr.CHR_ELEMENT_FIRE) {
+				return 2;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_LIGHT) {
+			if (tgtElement == Chr.CHR_ELEMENT_DARK) {
+				return 1;
+			}
+		} else if (actElement == Action.ACTION_ELEMENT_DARK) {
+			if (tgtElement == Chr.CHR_ELEMENT_LIGHT) {
+				return 1;
+			}
+		}
+		
+		// 属性相性が良い、悪い以外の場合は相性ノーマルの0を返す
+		return compatibilityNomal;
 	}
 
 	/**
@@ -549,7 +622,13 @@ public class IO {
 		}
 		return num;
 	}
-
+	
+	/**
+	 * HPが0以下になった時に死亡状態にセットし、倒した時のメッセージを表示する
+	 * 第一引数が攻撃側のChr、第二引数が防御側のChrをセットする
+	 * @param attacker
+	 * @param defender
+	 */
 	public static void judgeHP(Chr attacker, Chr defender) {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
@@ -600,10 +679,77 @@ public class IO {
 		return false;
 	}
 	
+	/**
+	 * 単体状態変更メソッド
+	 * 実際に状態変更を行っているのがこれ
+	 * 
+	 * @param me
+	 * @param target
+	 * @param statusNo
+	 */
+	private static void changeSingleStatus(Chr me, Chr target, int statusNo) {
+		// 魔法を反射したとき、魔法が成功するかの真偽値
+		boolean isSuccess = true;
+		
+		// 魔法反射判定
+		if (me.action instanceof ActionMagic && target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+			target = me;
+			IO.msgln("光の鏡が呪文を跳ね返した！");
+			// 成功率が100以外の時は、成功するかどうか再び判定する
+			if (me.action.successRate != Action.SUCCESS_RATE_DEFAULT) {
+				if (!IO.probability(me.action.successRate)) {
+					isSuccess = false;
+					msgln("しかし%sには効かなかった！", target.name);
+				}
+			}
+		}
+		
+		if (isSuccess) {
+			if (statusNo == target.STATUS_POISONED || statusNo == target.STATUS_DEADLY_POISONED) {
+				if (target.canBePoisoned) {
+					target.status = statusNo;
+					setStatus(target);
+				}
+			} else if (statusNo == target.STATUS_PARALYZED) {
+				if (target.canBeParalyzed) {
+					target.status = statusNo;
+					setStatus(target);
+				}
+			} else if (statusNo == target.STATUS_ASLEEP) {
+				if (target.canBeAsleep) {
+					target.status = statusNo;
+					setStatus(target);
+				}
+			} else if (statusNo == target.STATUS_CONFUSED) {
+				if (target.canBeConfused) {
+					target.status = statusNo;
+					setStatus(target);
+				}
+			} else if (statusNo == target.STATUS_SILENT) {
+				if (target.canBeSilent) {
+					target.status = statusNo;
+					setStatus(target);
+				}
+			} else {
+				int statusTurn = randomNum(me.action.rangeMinInt, me.action.rangeMaxInt);
+				target.statusMap.put(statusNo, statusTurn);
+			}
+		}
+	}
 	
-	public static void changeSingleStatus(Chr me, Chr target, int statusNo) {
-		if ((statusNo == target.STATUS_POISONED || statusNo == target.STATUS_DEADLY_POISONED) && target.canBePoisoned) {
-			
+	/**
+	 * 単体状態変更メソッド
+	 * このメソッドで処理を受け付ける
+	 * @param me
+	 * @param statusNo
+	 */
+	public static void changeSingleStatus(Chr me, int statusNo) {
+		Chr target = me.targets.get(0);
+		
+		if (target.isAlive()) {
+			changeSingleStatus(me, target, statusNo);
+		} else {
+			msgln("%sは死んでいる！", target.name);
 		}
 	}
 	
@@ -616,8 +762,11 @@ public class IO {
 	public static void changeMultiStatus(Chr me, int statusNo) {
 		for (Chr target : me.targets) {
 			if (target.isAlive()) {
-				changeSingleStatus(me, target, statusNo);
-				setStatus(target);
+				if (IO.probability(me.action.successRate)) {
+					changeSingleStatus(me, target, statusNo);
+				} else {
+					IO.msgln("しかし%sには効かなかった！", target.name);
+				}
 			}
 		}
 	}
@@ -824,6 +973,16 @@ public class IO {
 		// うけながしがtrueのとき、falseに戻す
 		} else if (chr.copOut) {
 			chr.copOut = chr.COP_OUT_DEFAULT;
+		} else if (chr.statusMap.get(chr.STATUS_MAGIC_BOUNCE) > 0) {
+			int value = chr.statusMap.get(chr.STATUS_MAGIC_BOUNCE);
+			value--;
+			if (value == 0) {
+				// マップから削除
+				chr.statusMap.remove(chr.STATUS_MAGIC_BOUNCE);
+				msgln("%sの光の鏡は消えてしまった！", chr.name);
+			} else {
+				chr.statusMap.put(chr.STATUS_MAGIC_BOUNCE, value);
+			}
 		}
 	}
 	

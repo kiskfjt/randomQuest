@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import action.ActionMagic;
 import chr.Chr;
 import chr.Party;
 
@@ -222,16 +221,13 @@ public class Battle {
 			// アクションが設定されていない、もしくは蘇生されたばかりの場合もスキップ
 			if (c.action == null)
 				continue;
-			
+
 			// MPチェック　MPが足りなければスキップ
-			if (c.action instanceof ActionMagic) {
-				ActionMagic mAction = (ActionMagic) c.action;
-				if (mAction.MPCons > c.MP) {
-					IO.msgln("MPが足りない！");
-					continue;
-				}
+			if (c.action.MPCons > c.MP) {
+				IO.msgln("MPが足りない！");
+				continue;
 			}
-			
+
 			// action実行
 			while (true) {
 				c.action.execute();

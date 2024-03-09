@@ -1,17 +1,16 @@
-package action.skills;
+package action.magics;
 
-import action.ActionSkill;
+import action.ActionMagic;
 import chr.Chr;
 import others.IO;
 
-public class ActionSkillMysteryWaltz extends ActionSkill {
+public class ActionMagicMPAbsorb extends ActionMagic {
 
-	public ActionSkillMysteryWaltz(Chr me) {
+	public ActionMagicMPAbsorb(Chr me) {
 		super(me);
-		name = "ミステリーワルツ";
+		name = "ドレインマジック";
 		rangeMin = 0.8;
 		rangeMax = 1.2;
-		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果対象：敵単体
@@ -23,7 +22,7 @@ public class ActionSkillMysteryWaltz extends ActionSkill {
 	public void execute() {
 		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
 
-		IO.msgln("【%sは%sを踊った！】", me.name, name);
+		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 		
 		Chr target = me.targets.get(0);
 		
@@ -41,5 +40,4 @@ public class ActionSkillMysteryWaltz extends ActionSkill {
 
 		IO.msgln("%sのMPを%d奪った！", target.name, value);
 	}
-
 }

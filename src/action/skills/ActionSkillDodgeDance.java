@@ -11,6 +11,7 @@ public class ActionSkillDodgeDance extends ActionSkill {
 		name = "みかわしきゃく";
 		rangeMinInt = 2;
 		rangeMaxInt = 3;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果範囲：自分自身

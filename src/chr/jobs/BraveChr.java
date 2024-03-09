@@ -13,6 +13,7 @@ import action.magics.ActionMagicLightningStorm;
 import action.skills.ActionSkillDisruptiveWave;
 import action.skills.ActionSkillGigaSlash;
 import action.skills.ActionSkillMeditation;
+import action.skills.ActionSkillSatsugekiBukouken;
 import chr.Chr;
 import others.IO;
 
@@ -40,6 +41,7 @@ public class BraveChr extends Chr {
 		actions.add(new ActionSkillGigaSlash(this));
 		actions.add(new ActionMagicLightningStorm(this));
 		actions.add(new ActionMagicGigaLightning(this));
+		actions.add(new ActionSkillSatsugekiBukouken(this));
 		
 		setToNPC();
 	}

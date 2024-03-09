@@ -1,6 +1,7 @@
 package others;
 
 import action.Action;
+import action.ActionMagic;
 import chr.Chr;
 import chr.Party;
 import item.Item;
@@ -10,12 +11,18 @@ public class Calc {
 	private static final int CRITICAL_MULTI = 2;
 	// 回避率の最大値
 	private static final int EVASION_MAX_RATE = 100;
+	// 攻撃側の属性相性が普通のとき
+	private static final double ELEMENT_COMPATIBILITY_NOMAL = 1.0;
+	// 攻撃側の属性相性が良いとき
+	private static final double ELEMENT_COMPATIBILITY_GOOD = 1.5;
+	// 攻撃側の属性相性が悪いとき
+	private static final double ELEMENT_COMPATIBILITY_BAD = 0.66;
 	
-	public static int physSingleDmg(Chr me, Chr target) {
+	private static int physSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
 		int Dmg = 0;
 		dDmg =  me.ATK * me.action.multi * me.ATKNext * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
-			   / target.DEF / target.DEFNext;
+			   / target.DEF / target.DEFNext * elementCompatibility(me, target);
 		Dmg = (int) dDmg;
 		
 		// 受け流し判定
@@ -155,11 +162,11 @@ public class Calc {
 	 * @param me
 	 * @param target
 	 */
-	public static void mgcSingleDmg(Chr me, Chr target) {
+	private static void mgcSingleDmg(Chr me, Chr target) {
 		double dDmg = 0;
 		int Dmg = 0;
 		dDmg = me.MAT * me.action.multi * IO.randomNum(me.action.rangeMin, me.action.rangeMax)
-				/ target.MDF / target.DEFNext * target.magicResistance;
+				/ target.MDF / target.DEFNext * target.magicResistance * elementCompatibility(me, target);
 		Dmg = (int) dDmg;
 		
 		judgeProbabilityAndFixDmg(me, target, Dmg);
@@ -222,6 +229,11 @@ public class Calc {
 	 * @param Dmg
 	 */
 	private static void judgeProbabilityAndFixDmg(Chr me, Chr target, int Dmg) {
+		// 魔法反射判定
+		if (target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+			target = me;
+			IO.msgln("光の鏡が呪文を跳ね返した！");
+		}
 		// 確率判定
 		if (IO.probability(me.action.missRate)) {
 			Dmg = 0;
@@ -336,10 +348,16 @@ public class Calc {
 		me.targets.forEach(chr -> maxSingleHeal(chr, me));
 	}
 	
-	public static void singleBuff(Chr me, Chr target, int buffNo, double buffValue) {
+	private static void singleBuff(Chr me, Chr target, int buffNo, double buffValue) {
 		int buff = 0;
 		int beforeBuff = 0;
 		String buffName = "";
+		
+		// 魔法反射判定
+		if (me.action instanceof ActionMagic && target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+			target = me;
+			IO.msgln("光の鏡が呪文を跳ね返した！");
+		}
 		
 		if (buffNo == Action.BUFF_ATK) {
 			if (target.canLowerATK || (!target.canLowerATK && buffValue >= 0)) {
@@ -432,9 +450,7 @@ public class Calc {
 	
 	public static void multiBuff(Chr me, int buffNo, double buffValue) {
 		for (Chr c : me.targets) {
-			if (c.isDead()) {
-				System.out.println(c.name + "はしんでいる！");
-			} else if (c.isAlive()) {
+			if (c.isAlive()) {
 				singleBuff(me, c, buffNo, buffValue);
 			}
 		}
@@ -581,5 +597,22 @@ public class Calc {
 		if (IO.isTargetDead(me)) {
 			me.MP -= MPCons;
 		}
+	}
+	
+	/**
+	 * 属性の相性に応じて値を返すメソッド
+	 * 攻撃側の相性が良いときはGOOD,悪いときはBAD,普通の時はNOMALの値を返す
+	 * @param me
+	 * @param target
+	 * @return
+	 */
+	private static double elementCompatibility(Chr me, Chr target) {
+		if (IO.elementCompatibility(me, target) == 1) {
+			return ELEMENT_COMPATIBILITY_GOOD;
+		} else if (IO.elementCompatibility(me, target) == 2) {
+			return ELEMENT_COMPATIBILITY_BAD;
+		}
+		
+		return ELEMENT_COMPATIBILITY_NOMAL;
 	}
 }

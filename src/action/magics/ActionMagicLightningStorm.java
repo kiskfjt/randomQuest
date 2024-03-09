@@ -9,9 +9,10 @@ public class ActionMagicLightningStorm extends ActionMagic {
 
 	public ActionMagicLightningStorm(Chr me) {
 		super(me);
-		name = "ジゴスパーク";
+		name = "ゴジスパーク";
 		multi = 40;
 		MPCons = 25;
+		missRate = 0;
 	}
 
 	// 対象：敵全体

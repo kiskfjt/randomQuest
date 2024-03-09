@@ -1,6 +1,8 @@
 package chr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import action.Action;
@@ -43,13 +45,14 @@ public abstract class Chr {
 	// スキルや魔法、アイテムによる状態変化の定数
 	public final int STATUS_INVINCIBLE = 20;
 	public final int STATUS_SING = 21;
+	public final int STATUS_MAGIC_BOUNCE = 22;
 	public final int STATUS_SKIP = 50;
 	
 	public final int STATUS_DEAD = 99;
 	public final String STATUS_STR_DEAD = "しに";
 	
-	
-	
+	// 重複可能な状態変化のマップ
+	public Map<Integer, Integer> statusMap;
 	
 	
 	public String name;
@@ -93,9 +96,23 @@ public abstract class Chr {
 	public int statusTurn;
 	public String statusStr;
 	public double magicResistance;
+	// 回避率
 	public int evasionRate;
 	public int evasionTurn;
+	// 受け流し
 	public boolean copOut;
+	// キャラ属性
+	public int element;
+	
+	// 属性番号
+	public static final int CHR_ELEMENT_NOMAL = 0;
+	public static final int CHR_ELEMENT_FIRE = 1;
+	public static final int CHR_ELEMENT_WATER = 2;
+	public static final int CHR_ELEMENT_THUNDER = 3;
+	public static final int CHR_ELEMENT_EARTH = 4;
+	public static final int CHR_ELEMENT_AIR = 5;
+	public static final int CHR_ELEMENT_LIGHT = 6;
+	public static final int CHR_ELEMENT_DARK = 7;
 	
 	// 耐性関連
 	public boolean canLowerATK;
@@ -104,6 +121,7 @@ public abstract class Chr {
 	public boolean canLowerMDF;
 	public boolean canLowerSPD;
 	public boolean canLowerMagicResistance;
+	public boolean canBeKilledInstantly;
 	
 	// 状態異常耐性
 	public boolean canBePoisoned;
@@ -111,6 +129,9 @@ public abstract class Chr {
 	public boolean canBeAsleep;
 	public boolean canBeConfused;
 	public boolean canBeSilent;
+	
+	// アクション禁止タイプのリスト
+	public ArrayList<Integer> bannedActionTypeList;
 	
 	public Party party;
 	public ArrayList<Action> actions;
@@ -177,7 +198,7 @@ public abstract class Chr {
 		evasionRate = EVASION_RATE_DEFAULT;
 		evasionTurn = EVASION_TURN_DEFAULT;
 		copOut = COP_OUT_DEFAULT;
-		
+		element = CHR_ELEMENT_NOMAL;
 		// 耐性関連
 		canLowerATK = RESISTANCE_DEFAULT;
 		canLowerDEF = RESISTANCE_DEFAULT;
@@ -192,6 +213,9 @@ public abstract class Chr {
 		canBeAsleep = RESISTANCE_DEFAULT;
 		canBeConfused = RESISTANCE_DEFAULT;
 		canBeSilent = RESISTANCE_DEFAULT;
+		
+		statusMap = new HashMap<>();
+		bannedActionTypeList = new ArrayList<>();
 	}
 	
 	public Chr() {

@@ -9,7 +9,7 @@ public class ActionSkillMeteorStrike extends ActionSkill {
 
 	public ActionSkillMeteorStrike(Chr me) {
 		super(me);
-		name = "メテオストライク";
+		name = "ミーティアストライク";
 		multi = 70;
 		rangeMin = 0.6;
 		rangeMax = 1.4;

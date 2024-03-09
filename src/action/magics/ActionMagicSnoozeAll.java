@@ -2,32 +2,32 @@ package action.magics;
 
 import action.ActionMagic;
 import chr.Chr;
-import others.Calc;
 import others.IO;
 
-public class ActionMagicBreakShield extends ActionMagic {
+public class ActionMagicSnoozeAll extends ActionMagic {
 
-	public ActionMagicBreakShield(Chr me) {
+	public ActionMagicSnoozeAll(Chr me) {
 		super(me);
-		name = "ブレイクシールド";
+		name = "ラリポーマ";
 		MPCons = 10;
-		buffNo = BUFF_DEF;
-		buffValue = -0.25;
+		successRate = 50;
+		statusNo = me.STATUS_ASLEEP;
 	}
-	
-	// デバフ対象：敵単体
+
+	// 対象：敵全体
 	public boolean playerTarget() {
 		return IO.selectSingleAliveTarget(me.party.enemy.member, me);
 	}
 
-	// 防御デバフ：baseDEFの25%ダウン
+	// 効果：敵単体を確率で睡眠状態にする
 	public void execute() {
 		IO.changeTargetsRandomlyIfDead(me.party.enemy.member, me);
 		
 		IO.msgln("【%sは%sを唱えた！】", me.name, name);
-
-		Calc.singleBuff(me, buffNo, buffValue);
+		
+		IO.changeSingleStatus(me, statusNo);	
 		
 		me.MP -= MPCons;
 	}
+
 }

@@ -9,8 +9,9 @@ public class ActionSkillKerplunkDance extends ActionSkill {
 
 	public ActionSkillKerplunkDance(Chr me) {
 		super(me);
-		name = "メガザルダンス";
+		name = "メガゾルダンス";
 		successRate = 50;
+		actionType = ACTION_TYPE_DANCE;
 	}
 
 	// 効果範囲：自分以外の味方全員

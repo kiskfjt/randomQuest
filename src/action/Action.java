@@ -61,13 +61,44 @@ public abstract class Action {
 	public int MPCons;
 	
 	// 成功率
-	public int successRate;
+	public int successRate = SUCCESS_RATE_DEFAULT;
 	
 	// ミス率
 	public int missRate = MISS_RATE_DEFAULT;
 	
 	// 会心痛恨率
 	public int criticalRate = CRITICAL_RATE_DEFAULT;
+	
+	// アクションの種類の番号
+	public int actionType;
+	
+	// 隠しアクション番号
+	public final int ACTION_NOT_SPECIAL = 0;
+	public final int ACTION_SPECIAL_LOW_HP = 1;
+	// 隠しアクション条件
+	public double actionSpecialHPCondition;
+	// 隠しアクションデフォルト設定
+	public int specialAction = ACTION_NOT_SPECIAL;
+	
+	// 属性番号
+	public static final int ACTION_ELEMENT_NOMAL = 0;
+	public static final int ACTION_ELEMENT_FIRE = 1;
+	public static final int ACTION_ELEMENT_WATER = 2;
+	public static final int ACTION_ELEMENT_THUNDER = 3;
+	public static final int ACTION_ELEMENT_EARTH = 4;
+	public static final int ACTION_ELEMENT_AIR = 5;
+	public static final int ACTION_ELEMENT_LIGHT = 6;
+	public static final int ACTION_ELEMENT_DARK = 7;
+	// 属性デフォルト設定
+	public int element = ACTION_ELEMENT_NOMAL;
+	
+	// アクションの種類
+	public final int ACTION_TYPE_SLASH = 1;
+	public final int ACTION_TYPE_BLOW = 2;
+	public final int ACTION_TYPE_DANCE = 3;
+	
+	// 状態変化の番号
+	public int statusNo;
 	
 	public Action(Chr me) {
 		this.me = me;
