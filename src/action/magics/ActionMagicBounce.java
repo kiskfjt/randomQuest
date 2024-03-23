@@ -13,7 +13,7 @@ public class ActionMagicBounce extends ActionMagic {
 		MPCons = 15;
 		rangeMinInt = 2;
 		rangeMaxInt = 4;
-		statusNo = me.STATUS_MAGIC_BOUNCE;	}
+		statusNo = Chr.STATUS_MAGIC_BOUNCE;	}
 
 	// 対象：味方単体
 	public boolean playerTarget() {

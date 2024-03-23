@@ -52,27 +52,27 @@ public class ItemMushroom extends Item {
 				switch (mushroomNo) {
 				case 0:
 					IO.msgln("なんとそれは毒きのこだった！");
-					me.status = me.STATUS_POISONED;
+					me.status = Chr.STATUS_POISONED;
 					break;
 				case 1:
 					IO.msgln("なんとそれは猛毒きのこだった！");
-					me.status = me.STATUS_DEADLY_POISONED;
+					me.status = Chr.STATUS_DEADLY_POISONED;
 					break;
 				case 2:
 					IO.msgln("なんとそれはしびれきのこだった！");
-					me.status = me.STATUS_PARALYZED;
+					me.status = Chr.STATUS_PARALYZED;
 					break;
 				case 3:
 					IO.msgln("なんとそれは眠りきのこだった！");
-					me.status = me.STATUS_ASLEEP;
+					me.status = Chr.STATUS_ASLEEP;
 					break;
 				case 4:
 					IO.msgln("なんとそれは混乱きのこだった！");
-					me.status = me.STATUS_CONFUSED;
+					me.status = Chr.STATUS_CONFUSED;
 					break;
 				case 5:
 					IO.msgln("なんとそれは沈黙きのこだった！");
-					me.status = me.STATUS_SILENT;
+					me.status = Chr.STATUS_SILENT;
 					break;
 				}
 			}

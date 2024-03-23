@@ -11,7 +11,7 @@ public class ActionMagicSnooze extends ActionMagic {
 		name = "ラリポー";
 		MPCons = 5;
 		successRate = 50;
-		statusNo = me.STATUS_ASLEEP;
+		statusNo = Chr.STATUS_ASLEEP;
 	}
 
 	// 対象：敵単体

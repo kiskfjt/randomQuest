@@ -9,6 +9,7 @@ public class EquipmentFireClaw extends Equipment {
 		super(me);
 		name = "炎の爪";
 		ATK = 30;
+		elementPointFire = 10;
 		addStatus();
 		rangeMin = 30;
 		rangeMax = 50;

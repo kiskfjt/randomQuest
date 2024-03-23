@@ -14,13 +14,24 @@ public abstract class Equipment extends Item {
 		addStatus();
 	}
 	
-	public int HP = 0;
-	public int MP = 0;
-	public int ATK = 0;
-	public int DEF = 0;
-	public int MAT = 0;
-	public int MDF = 0;
-	public int SPD = 0;
+	private final int EQUIPMENT_STATUS_DEFAULT = 0;
+	public int HP = EQUIPMENT_STATUS_DEFAULT;
+	public int MP = EQUIPMENT_STATUS_DEFAULT;
+	public int ATK = EQUIPMENT_STATUS_DEFAULT;
+	public int DEF = EQUIPMENT_STATUS_DEFAULT;
+	public int MAT = EQUIPMENT_STATUS_DEFAULT;
+	public int MDF = EQUIPMENT_STATUS_DEFAULT;
+	public int SPD = EQUIPMENT_STATUS_DEFAULT;
+	
+	// 属性ポイント（キャラの属性決定時に使う）
+	private final int ELEMENT_POINT_DEFAULT = 0;
+	public int elementPointFire = ELEMENT_POINT_DEFAULT;
+	public int elementPointWater = ELEMENT_POINT_DEFAULT;
+	public int elementPointThunder = ELEMENT_POINT_DEFAULT;
+	public int elementPointEarth = ELEMENT_POINT_DEFAULT;
+	public int elementPointAir = ELEMENT_POINT_DEFAULT;
+	public int elementPointLight = ELEMENT_POINT_DEFAULT;
+	public int elementPointDark = ELEMENT_POINT_DEFAULT;
 	
 	public void addStatus() {
 		me.HP = me.maxHP += HP;

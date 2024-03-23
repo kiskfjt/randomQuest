@@ -12,7 +12,7 @@ public class ActionMagicDetoxify extends ActionMagic {
 		MPCons = 8;
 	}
 	
-	private int clearStatusNo = me.STATUS_POISONED; 
+	private int clearStatusNo = Chr.STATUS_POISONED; 
 
 	@Override
 	public boolean playerTarget() {

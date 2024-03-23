@@ -9,6 +9,7 @@ public class EquipmentRubyOfStrength extends Equipment {
 		super(me);
 		name = "力のルビー";
 		ATK = 10;
+		elementPointFire = 5;
 		addStatus();
 	}
 

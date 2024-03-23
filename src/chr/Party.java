@@ -2,6 +2,7 @@ package chr;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import action.ActionMagic;
 import action.ActionSkill;
@@ -26,6 +27,8 @@ public class Party {
 	public Party enemy;
 	// パーティー番号
 	public int pKind;
+	// 属性ポイント初期値
+	private final int ELEMENT_POINT_DEFAULT = 0;
 	
 	public Party(String[] name, int partyKind) {
 		member = new ArrayList<>();
@@ -54,6 +57,9 @@ public class Party {
 			
 			// そうびをランダム選択する
 			selectEquipment(chr);
+			
+			// そうびからキャラの属性を決定する
+			setChrElement(chr);
 			
 			// どうぐをランダム選択する
 			selectItems(chr, itemList);
@@ -500,5 +506,91 @@ public class Party {
 	 */
 	private Object randomPickup(ArrayList<String> strList) {
 		return randomPickup(strList, null);
+	}
+	
+	/**
+	 * 装備の属性ポイントの合計からキャラの属性を決めるメソッド
+	 * 合計点が一番高い属性をキャラの属性とする
+	 * ただし合計点が高い属性が2種類の場合は有利属性の方をキャラの属性とする（光と闇は除く）
+	 * それ以外の場合はキャラ属性はノーマルとなる。
+	 * @param chr
+	 */
+	private void setChrElement(Chr chr) {
+		int sumOfelementPointFire = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointWater = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointThunder = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointEarth = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointAir = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointLight = ELEMENT_POINT_DEFAULT;
+		int sumOfelementPointDark = ELEMENT_POINT_DEFAULT;
+		
+		for (Equipment equipment : chr.equipments) {
+			sumOfelementPointFire += equipment.elementPointFire;
+			sumOfelementPointWater += equipment.elementPointWater;
+			sumOfelementPointThunder += equipment.elementPointThunder;
+			sumOfelementPointEarth += equipment.elementPointEarth;
+			sumOfelementPointAir += equipment.elementPointAir;
+			sumOfelementPointLight += equipment.elementPointLight;
+			sumOfelementPointDark += equipment.elementPointDark;
+		}
+		
+		ArrayList<Integer> pointList = new ArrayList<>();
+		pointList.add(sumOfelementPointFire);
+		pointList.add(sumOfelementPointWater);
+		pointList.add(sumOfelementPointThunder);
+		pointList.add(sumOfelementPointEarth);
+		pointList.add(sumOfelementPointAir);
+		pointList.add(sumOfelementPointLight);
+		pointList.add(sumOfelementPointDark);
+		
+		Collections.sort(pointList, Collections.reverseOrder());
+		
+		ArrayList<Integer> maxPointList = new ArrayList<>();
+		
+		if (pointList.get(0) == sumOfelementPointFire) {
+			maxPointList.add(Chr.CHR_ELEMENT_FIRE);
+		} else if (pointList.get(0) == sumOfelementPointWater) {
+			maxPointList.add(Chr.CHR_ELEMENT_WATER);
+		} else if (pointList.get(0) == sumOfelementPointThunder) {
+			maxPointList.add(Chr.CHR_ELEMENT_THUNDER);
+		} else if (pointList.get(0) == sumOfelementPointEarth) {
+			maxPointList.add(Chr.CHR_ELEMENT_EARTH);
+		} else if (pointList.get(0) == sumOfelementPointAir) {
+			maxPointList.add(Chr.CHR_ELEMENT_AIR);
+		} else if (pointList.get(0) == sumOfelementPointLight) {
+			maxPointList.add(Chr.CHR_ELEMENT_LIGHT);
+		} else if (pointList.get(0) == sumOfelementPointDark) {
+			maxPointList.add(Chr.CHR_ELEMENT_DARK);
+		}
+		
+		
+		
+		if (maxPointList.size() == 1) {
+			chr.element = maxPointList.get(0);
+			chr.elementStr = Chr.elementMap.get(chr.element);
+		} else if (maxPointList.size() == 2) {
+			if (maxPointList.contains(Chr.CHR_ELEMENT_FIRE) && maxPointList.contains(Chr.CHR_ELEMENT_WATER)) {
+				chr.element = Chr.CHR_ELEMENT_WATER;
+				chr.elementStr = Chr.STR_ELEMENT_WATER;
+			} else if (maxPointList.contains(Chr.CHR_ELEMENT_WATER) && maxPointList.contains(Chr.CHR_ELEMENT_THUNDER)) {
+				chr.element = Chr.CHR_ELEMENT_THUNDER;
+				chr.elementStr = Chr.STR_ELEMENT_THUNDER;
+			} else if (maxPointList.contains(Chr.CHR_ELEMENT_THUNDER) && maxPointList.contains(Chr.CHR_ELEMENT_EARTH)) {
+				chr.element = Chr.CHR_ELEMENT_EARTH;
+				chr.elementStr = Chr.STR_ELEMENT_EARTH;
+			} else if (maxPointList.contains(Chr.CHR_ELEMENT_EARTH) && maxPointList.contains(Chr.CHR_ELEMENT_AIR)) {
+				chr.element = Chr.CHR_ELEMENT_AIR;
+				chr.elementStr = Chr.STR_ELEMENT_AIR;
+			} else if (maxPointList.contains(Chr.CHR_ELEMENT_AIR) && maxPointList.contains(Chr.CHR_ELEMENT_FIRE)) {
+				chr.element = Chr.CHR_ELEMENT_FIRE;
+				chr.elementStr = Chr.STR_ELEMENT_FIRE;
+			} else {// 上記以外の場合はリストの0か1の位置の値をランダムで返す
+				chr.element = Chr.CHR_ELEMENT_NOMAL;
+				chr.elementStr = Chr.STR_ELEMENT_NOMAL;
+			}
+		} else {
+			chr.element = Chr.CHR_ELEMENT_NOMAL;
+			chr.elementStr = Chr.STR_ELEMENT_NOMAL;
+		}
 	}
 }

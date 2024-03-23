@@ -9,6 +9,7 @@ public class EquipmentAgilityRing extends Equipment {
 		super(me);
 		name = "はやてのリング";
 		SPD = 10;
+		elementPointAir = 5;
 		addStatus();
 	}
 

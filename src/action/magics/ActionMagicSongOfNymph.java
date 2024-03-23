@@ -22,7 +22,7 @@ public class ActionMagicSongOfNymph extends ActionMagic {
 
 	// 対象：味方全体
 	public boolean playerTarget() {
-		me.status = me.STATUS_SING;
+		me.status = Chr.STATUS_SING;
 		me.statusStr = this.statusStr;
 		me.statusTurn = this.statusTurn;
 		
@@ -39,7 +39,7 @@ public class ActionMagicSongOfNymph extends ActionMagic {
 			IO.msgln("%sは歌を歌い終わった！", me.name);
 			Calc.multiRevive(me);
 			
-			me.status = me.STATUS_NOMAL;
+			me.status = Chr.STATUS_NOMAL;
 		}
 	}
 

@@ -11,7 +11,7 @@ public class ActionMagicSnoozeAll extends ActionMagic {
 		name = "ラリポーマ";
 		MPCons = 10;
 		successRate = 50;
-		statusNo = me.STATUS_ASLEEP;
+		statusNo = Chr.STATUS_ASLEEP;
 	}
 
 	// 対象：敵全体
@@ -25,7 +25,7 @@ public class ActionMagicSnoozeAll extends ActionMagic {
 		
 		IO.msgln("【%sは%sを唱えた！】", me.name, name);
 		
-		IO.changeSingleStatus(me, statusNo);	
+		IO.changeMultiStatus(me, statusNo);	
 		
 		me.MP -= MPCons;
 	}

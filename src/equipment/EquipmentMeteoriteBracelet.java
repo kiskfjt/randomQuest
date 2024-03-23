@@ -9,6 +9,7 @@ public class EquipmentMeteoriteBracelet extends Equipment {
 		super(me);
 		name = "ほしふるうでわ";
 		SPD = me.baseSPD;
+		elementPointLight = 10;
 		addStatus();
 	}
 

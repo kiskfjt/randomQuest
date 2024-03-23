@@ -26,30 +26,30 @@ public abstract class Chr {
 	private final boolean RESISTANCE_DEFAULT = true;
 	
 	// 状態異常の定数
-	public final int STATUS_NOMAL = 0;
-	public final int STATUS_POISONED = 1;
-	public final int STATUS_DEADLY_POISONED = 2;
-	public final int STATUS_PARALYZED = 3;
-	public final int STATUS_ASLEEP = 4;
-	public final int STATUS_CONFUSED = 5;
-	public final int STATUS_SILENT = 6;
+	public static final int STATUS_NOMAL = 0;
+	public static final int STATUS_POISONED = 1;
+	public static final int STATUS_DEADLY_POISONED = 2;
+	public static final int STATUS_PARALYZED = 3;
+	public static final int STATUS_ASLEEP = 4;
+	public static final int STATUS_CONFUSED = 5;
+	public static final int STATUS_SILENT = 6;
 	
 	// 状態異常の名前
-	public final String STATUS_STR_POISONED = "どく";
-	public final String STATUS_STR_DEADLY_POISONED = "もうどく";
-	public final String STATUS_STR_PARALYZED = "まひ";
-	public final String STATUS_STR_ASLEEP = "眠り";
-	public final String STATUS_STR_CONFUSED = "混乱";
-	public final String STATUS_STR_SILENT = "沈黙";
+	public static final String STATUS_STR_POISONED = "どく";
+	public static final String STATUS_STR_DEADLY_POISONED = "もうどく";
+	public static final String STATUS_STR_PARALYZED = "まひ";
+	public static final String STATUS_STR_ASLEEP = "眠り";
+	public static final String STATUS_STR_CONFUSED = "混乱";
+	public static final String STATUS_STR_SILENT = "沈黙";
 	
 	// スキルや魔法、アイテムによる状態変化の定数
-	public final int STATUS_INVINCIBLE = 20;
-	public final int STATUS_SING = 21;
-	public final int STATUS_MAGIC_BOUNCE = 22;
-	public final int STATUS_SKIP = 50;
+	public static final int STATUS_INVINCIBLE = 20;
+	public static final int STATUS_SING = 21;
+	public static final int STATUS_MAGIC_BOUNCE = 22;
+	public static final int STATUS_SKIP = 50;
 	
-	public final int STATUS_DEAD = 99;
-	public final String STATUS_STR_DEAD = "しに";
+	public static final int STATUS_DEAD = 99;
+	public static final String STATUS_STR_DEAD = "しに";
 	
 	// 重複可能な状態変化のマップ
 	public Map<Integer, Integer> statusMap;
@@ -103,6 +103,7 @@ public abstract class Chr {
 	public boolean copOut;
 	// キャラ属性
 	public int element;
+	public String elementStr;
 	
 	// 属性番号
 	public static final int CHR_ELEMENT_NOMAL = 0;
@@ -113,6 +114,17 @@ public abstract class Chr {
 	public static final int CHR_ELEMENT_AIR = 5;
 	public static final int CHR_ELEMENT_LIGHT = 6;
 	public static final int CHR_ELEMENT_DARK = 7;
+	// 属性の名前
+	public static final String STR_ELEMENT_NOMAL = "無";
+	public static final String STR_ELEMENT_FIRE = "火";
+	public static final String STR_ELEMENT_WATER = "水";
+	public static final String STR_ELEMENT_THUNDER = "雷";
+	public static final String STR_ELEMENT_EARTH = "土";
+	public static final String STR_ELEMENT_AIR = "風";
+	public static final String STR_ELEMENT_LIGHT = "光";
+	public static final String STR_ELEMENT_DARK = "闇";
+	// 属性番号と名前のマップ
+	public static Map<Integer, String> elementMap = makeElementMap();
 	
 	// 耐性関連
 	public boolean canLowerATK;
@@ -199,6 +211,7 @@ public abstract class Chr {
 		evasionTurn = EVASION_TURN_DEFAULT;
 		copOut = COP_OUT_DEFAULT;
 		element = CHR_ELEMENT_NOMAL;
+		elementStr = STR_ELEMENT_NOMAL;
 		// 耐性関連
 		canLowerATK = RESISTANCE_DEFAULT;
 		canLowerDEF = RESISTANCE_DEFAULT;
@@ -219,7 +232,6 @@ public abstract class Chr {
 	}
 	
 	public Chr() {
-		
 	}
 	
 	public int getSPD() {
@@ -232,6 +244,21 @@ public abstract class Chr {
 	
 	public boolean isDead() {
 		return HP <= 0;
+	}
+	
+	private static Map<Integer, String> makeElementMap() {
+		Map<Integer, String> elementMap = new HashMap<>();
+		
+		elementMap.put(CHR_ELEMENT_NOMAL, STR_ELEMENT_NOMAL);
+		elementMap.put(CHR_ELEMENT_FIRE, STR_ELEMENT_FIRE);
+		elementMap.put(CHR_ELEMENT_WATER, STR_ELEMENT_WATER);
+		elementMap.put(CHR_ELEMENT_THUNDER, STR_ELEMENT_THUNDER);
+		elementMap.put(CHR_ELEMENT_EARTH, STR_ELEMENT_EARTH);
+		elementMap.put(CHR_ELEMENT_AIR, STR_ELEMENT_AIR);
+		elementMap.put(CHR_ELEMENT_LIGHT, STR_ELEMENT_LIGHT);
+		elementMap.put(CHR_ELEMENT_DARK, STR_ELEMENT_DARK);
+		
+		return elementMap;
 	}
 	
 	// public Runnable command;

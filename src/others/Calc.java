@@ -230,7 +230,7 @@ public class Calc {
 	 */
 	private static void judgeProbabilityAndFixDmg(Chr me, Chr target, int Dmg) {
 		// 魔法反射判定
-		if (target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+		if (target.statusMap.containsKey(Chr.STATUS_MAGIC_BOUNCE)) {
 			target = me;
 			IO.msgln("光の鏡が呪文を跳ね返した！");
 		}
@@ -354,7 +354,7 @@ public class Calc {
 		String buffName = "";
 		
 		// 魔法反射判定
-		if (me.action instanceof ActionMagic && target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+		if (me.action instanceof ActionMagic && target.statusMap.containsKey(Chr.STATUS_MAGIC_BOUNCE)) {
 			target = me;
 			IO.msgln("光の鏡が呪文を跳ね返した！");
 		}
@@ -474,7 +474,7 @@ public class Calc {
 			}
 		} else if (target.HP == 0 && isRevived) {
 			target.HP = (int) (target.maxHP * IO.randomNum(me.action.rangeMin, me.action.rangeMax));
-			target.status = target.STATUS_NOMAL;
+			target.status = Chr.STATUS_NOMAL;
 			IO.msgln("%sは生き返った！", target.name);
 		} else {
 			IO.msgln("しかし%sは生き返らなかった！", target.name);

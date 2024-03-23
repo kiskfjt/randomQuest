@@ -126,6 +126,13 @@ public class IO {
 				msg("%7s", "");
 			}
 		}
+		ln();
+		msg("%2s", "属性");
+		msg("%3s", "");
+		for (int i = 0; i < member.size(); i++) {
+			msg("%6s", member.get(i).elementStr);
+			msg("%6s", "");
+		}
 
 		System.out.println();
 		System.out.println("*******************************************************");
@@ -632,8 +639,8 @@ public class IO {
 	public static void judgeHP(Chr attacker, Chr defender) {
 		if (defender.HP <= 0) {
 			defender.HP = 0;
-			defender.status = defender.STATUS_DEAD;
-			defender.statusStr = defender.STATUS_STR_DEAD;
+			defender.status = Chr.STATUS_DEAD;
+			defender.statusStr = Chr.STATUS_STR_DEAD;
 			if (defender.party.pKind == Party.PARTY_KIND_ENEMY) {
 				System.out.println(defender.name + "をたおした！");
 			} else {
@@ -692,7 +699,7 @@ public class IO {
 		boolean isSuccess = true;
 		
 		// 魔法反射判定
-		if (me.action instanceof ActionMagic && target.statusMap.containsKey(target.STATUS_MAGIC_BOUNCE)) {
+		if (me.action instanceof ActionMagic && target.statusMap.containsKey(Chr.STATUS_MAGIC_BOUNCE)) {
 			target = me;
 			IO.msgln("光の鏡が呪文を跳ね返した！");
 			// 成功率が100以外の時は、成功するかどうか再び判定する
@@ -705,27 +712,27 @@ public class IO {
 		}
 		
 		if (isSuccess) {
-			if (statusNo == target.STATUS_POISONED || statusNo == target.STATUS_DEADLY_POISONED) {
+			if (statusNo == Chr.STATUS_POISONED || statusNo == Chr.STATUS_DEADLY_POISONED) {
 				if (target.canBePoisoned) {
 					target.status = statusNo;
 					setStatus(target);
 				}
-			} else if (statusNo == target.STATUS_PARALYZED) {
+			} else if (statusNo == Chr.STATUS_PARALYZED) {
 				if (target.canBeParalyzed) {
 					target.status = statusNo;
 					setStatus(target);
 				}
-			} else if (statusNo == target.STATUS_ASLEEP) {
+			} else if (statusNo == Chr.STATUS_ASLEEP) {
 				if (target.canBeAsleep) {
 					target.status = statusNo;
 					setStatus(target);
 				}
-			} else if (statusNo == target.STATUS_CONFUSED) {
+			} else if (statusNo == Chr.STATUS_CONFUSED) {
 				if (target.canBeConfused) {
 					target.status = statusNo;
 					setStatus(target);
 				}
-			} else if (statusNo == target.STATUS_SILENT) {
+			} else if (statusNo == Chr.STATUS_SILENT) {
 				if (target.canBeSilent) {
 					target.status = statusNo;
 					setStatus(target);
@@ -776,27 +783,27 @@ public class IO {
 	 * @param me
 	 */
 	public static void setStatus(Chr me) {
-		if (me.status == me.STATUS_POISONED) {
-			me.statusStr = me.STATUS_STR_POISONED;
+		if (me.status == Chr.STATUS_POISONED) {
+			me.statusStr = Chr.STATUS_STR_POISONED;
 			msgln("%sは毒におかされた！", me.name);
-		} else if (me.status == me.STATUS_DEADLY_POISONED) {
-			me.statusStr = me.STATUS_STR_DEADLY_POISONED;
+		} else if (me.status == Chr.STATUS_DEADLY_POISONED) {
+			me.statusStr = Chr.STATUS_STR_DEADLY_POISONED;
 			msgln("%sは猛毒におかされた！", me.name);
-		} else if (me.status == me.STATUS_PARALYZED) {
-			me.statusStr = me.STATUS_STR_PARALYZED;
+		} else if (me.status == Chr.STATUS_PARALYZED) {
+			me.statusStr = Chr.STATUS_STR_PARALYZED;
 			msgln("%sは体がまひした！", me.name);
-		} else if (me.status == me.STATUS_ASLEEP) {
-			me.statusStr = me.STATUS_STR_ASLEEP;
+		} else if (me.status == Chr.STATUS_ASLEEP) {
+			me.statusStr = Chr.STATUS_STR_ASLEEP;
 			msgln("%sは眠ってしまった！", me.name);
-		} else if (me.status == me.STATUS_CONFUSED) {
-			me.statusStr = me.STATUS_STR_CONFUSED;
+		} else if (me.status == Chr.STATUS_CONFUSED) {
+			me.statusStr = Chr.STATUS_STR_CONFUSED;
 			msgln("%sは頭が混乱した！", me.name);
-		} else if (me.status == me.STATUS_SILENT) {
-			me.statusStr = me.STATUS_STR_SILENT;
+		} else if (me.status == Chr.STATUS_SILENT) {
+			me.statusStr = Chr.STATUS_STR_SILENT;
 			msgln("%sは沈黙状態になった！", me.name);
 		}
 		
-		if (me.status != me.STATUS_NOMAL) {
+		if (me.status != Chr.STATUS_NOMAL) {
 			me.statusTurn = randomNum(STATUS_TURN_MIN, STATUS_TURN_MAX);
 		}
 	}
@@ -809,8 +816,8 @@ public class IO {
 	 */
 	public static void clearStatus(Chr me, int clearStatusNo) {
 		if (me.status == clearStatusNo || 
-				((me.status == me.STATUS_POISONED || me.status == me.STATUS_DEADLY_POISONED) && 
-						(clearStatusNo == me.STATUS_POISONED || clearStatusNo == me.STATUS_DEADLY_POISONED))) {
+				((me.status == Chr.STATUS_POISONED || me.status == Chr.STATUS_DEADLY_POISONED) && 
+						(clearStatusNo == Chr.STATUS_POISONED || clearStatusNo == Chr.STATUS_DEADLY_POISONED))) {
 			me.statusTurn = 0;
 			recoverFromAbnormalStatus(me);
 		}
@@ -830,17 +837,17 @@ public class IO {
 			list.add(chr);
 		}
 		
-		if (me.status == me.STATUS_PARALYZED) {
+		if (me.status == Chr.STATUS_PARALYZED) {
 			if (probability(ACTION_CANCEL_PROBABILITY)) {
 				cantMove = true;
 				msgln("%sは体がまひして動けない！", me.name);
 			}
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_ASLEEP) {
+		} else if (me.status == Chr.STATUS_ASLEEP) {
 			cantMove = true;
 			msgln("%sは眠っている！", me.name);
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_CONFUSED) {
+		} else if (me.status == Chr.STATUS_CONFUSED) {
 			if (probability(ACTION_CANCEL_PROBABILITY)) {
 				msgln("%sはこんらんしている！", me.name);
 				me.targets.clear();
@@ -870,7 +877,7 @@ public class IO {
 				}
 			}
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_SILENT) {
+		} else if (me.status == Chr.STATUS_SILENT) {
 			if (me.action instanceof ActionMagic) {
 				cantMove = true;
 				msgln("%sはじゅもんが使えない！", me.name);
@@ -885,19 +892,19 @@ public class IO {
 	 * @param me
 	 */
 	public static void doStatusEffectAfterAction(Chr me) {
-		if (me.status == me.STATUS_POISONED) {
+		if (me.status == Chr.STATUS_POISONED) {
 			int dmg =  (int) (me.maxHP * IO.randomNum(POISONED_DAMAGE_MIN, POISONED_DAMAGE_MAX));
 			me.HP -= dmg;
 			msgln("%sは%dの毒ダメージを受けた！", me.name, dmg);
 			judgeHP(me.party.enemy.member.get(0), me);
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_DEADLY_POISONED) {
+		} else if (me.status == Chr.STATUS_DEADLY_POISONED) {
 			int dmg =  (int) (me.maxHP * IO.randomNum(DEADLY_POISONED_DAMAGE_MIN, DEADLY_POISONED_DAMAGE_MAX));
 			me.HP -= dmg;
 			msgln("%sは%dの猛毒のダメージを受けた！", me.name, dmg);
 			judgeHP(me.party.enemy.member.get(0), me);
 			me.statusTurn--;
-		} else if (me.status == me.STATUS_SING) {
+		} else if (me.status == Chr.STATUS_SING) {
 			me.statusTurn--;
 		}
 	}
@@ -908,27 +915,27 @@ public class IO {
 	 */
 	public static void recoverFromAbnormalStatus(Chr me) {
 		if (me.status != 0 && me.statusTurn == 0) {
-			if (me.status == me.STATUS_POISONED) {
+			if (me.status == Chr.STATUS_POISONED) {
 				msgln("%sの体から毒が消えた！", me.name);
-			} else if (me.status == me.STATUS_DEADLY_POISONED) {
+			} else if (me.status == Chr.STATUS_DEADLY_POISONED) {
 				msgln("%sの体から猛毒が消えた！", me.name);
-			} else if (me.status == me.STATUS_PARALYZED) {
+			} else if (me.status == Chr.STATUS_PARALYZED) {
 				msgln("%sの体のしびれがとれた！", me.name);
-			} else if (me.status == me.STATUS_ASLEEP) {
+			} else if (me.status == Chr.STATUS_ASLEEP) {
 				msgln("%sは目を覚ました！", me.name);
-			} else if (me.status == me.STATUS_CONFUSED) {
+			} else if (me.status == Chr.STATUS_CONFUSED) {
 				msgln("%sは正気に戻った！", me.name);
-			} else if (me.status == me.STATUS_SILENT) {
+			} else if (me.status == Chr.STATUS_SILENT) {
 				msgln("%sは喋れるようになった！", me.name);
-			} else if (me.status == me.STATUS_INVINCIBLE) {
+			} else if (me.status == Chr.STATUS_INVINCIBLE) {
 				msgln("%sの鋼鉄化がとけた！", me.name);
-			} else if (me.status == me.STATUS_SKIP) {
-				me.status = me.STATUS_NOMAL;
+			} else if (me.status == Chr.STATUS_SKIP) {
+				me.status = Chr.STATUS_NOMAL;
 				return;
-			} else if (me.status == me.STATUS_SING) {
+			} else if (me.status == Chr.STATUS_SING) {
 				return;
 			}
-			me.status = me.STATUS_NOMAL;
+			me.status = Chr.STATUS_NOMAL;
 			IO.enter();
 		}
 	}
@@ -938,8 +945,8 @@ public class IO {
 	 * @param me
 	 */
 	public static void recoverFromAsleep(Chr target) {
-		if (target.isAlive() && target.status == target.STATUS_ASLEEP) {
-			target.status = target.STATUS_NOMAL;
+		if (target.isAlive() && target.status == Chr.STATUS_ASLEEP) {
+			target.status = Chr.STATUS_NOMAL;
 			msgln("%sは目を覚ました！", target.name);
 		}
 	}
@@ -951,12 +958,12 @@ public class IO {
 	 */
 	public static boolean checkStatusBeforeCommand(Chr chr) {
 		// 歌ってるときはスキップ
-		if (chr.status == chr.STATUS_SING) {
+		if (chr.status == Chr.STATUS_SING) {
 			return true;
 		// 鋼鉄化のときはスキップ
-		} else if (chr.status == chr.STATUS_INVINCIBLE) {
+		} else if (chr.status == Chr.STATUS_INVINCIBLE) {
 			return true;
-		} else if (chr.status == chr.STATUS_SKIP) {
+		} else if (chr.status == Chr.STATUS_SKIP) {
 			return true;
 		}
 		
@@ -973,15 +980,15 @@ public class IO {
 		// うけながしがtrueのとき、falseに戻す
 		} else if (chr.copOut) {
 			chr.copOut = chr.COP_OUT_DEFAULT;
-		} else if (chr.statusMap.get(chr.STATUS_MAGIC_BOUNCE) > 0) {
-			int value = chr.statusMap.get(chr.STATUS_MAGIC_BOUNCE);
+		} else if (chr.statusMap.get(Chr.STATUS_MAGIC_BOUNCE) > 0) {
+			int value = chr.statusMap.get(Chr.STATUS_MAGIC_BOUNCE);
 			value--;
 			if (value == 0) {
 				// マップから削除
-				chr.statusMap.remove(chr.STATUS_MAGIC_BOUNCE);
+				chr.statusMap.remove(Chr.STATUS_MAGIC_BOUNCE);
 				msgln("%sの光の鏡は消えてしまった！", chr.name);
 			} else {
-				chr.statusMap.put(chr.STATUS_MAGIC_BOUNCE, value);
+				chr.statusMap.put(Chr.STATUS_MAGIC_BOUNCE, value);
 			}
 		}
 	}

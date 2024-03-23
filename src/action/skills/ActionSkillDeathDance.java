@@ -25,8 +25,8 @@ public class ActionSkillDeathDance extends ActionSkill {
 			if (target.isAlive() && target.canBeKilledInstantly) {
 				if (IO.probability(successRate)) {
 					target.HP = 0;
-					target.status = target.STATUS_DEAD;
-					target.statusStr = target.STATUS_STR_DEAD;
+					target.status = Chr.STATUS_DEAD;
+					target.statusStr = Chr.STATUS_STR_DEAD;
 					IO.msgln("%sの息の根を止めた！", target.name);
 				} else {
 					IO.msgln("%sには効かなかった！", target.name);

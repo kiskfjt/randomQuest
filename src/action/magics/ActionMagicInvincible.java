@@ -22,7 +22,7 @@ public class ActionMagicInvincible extends ActionMagic {
 		// ターゲット選択の時点で、鋼鉄化処理を行う（以降のキャラのコマンド省略のため）
 		for (Chr chr : me.targets) {
 			chr.DEFNext = 999999999;
-			chr.status = me.STATUS_INVINCIBLE;
+			chr.status = Chr.STATUS_INVINCIBLE;
 			chr.statusStr = this.statusStr;
 			chr.statusTurn = this.statusTurn;
 		}

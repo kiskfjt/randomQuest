@@ -33,7 +33,7 @@ public class ActionMagicGigaLightning extends ActionMagic {
 		}
 		
 		for (Chr chr : me.party.member) {
-			chr.status = me.STATUS_SKIP;
+			chr.status = Chr.STATUS_SKIP;
 			chr.statusTurn = this.statusTurn;
 		}
 		
